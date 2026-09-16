@@ -1,0 +1,50 @@
+[
+  {
+    "id": "a6fd6946-f55d-4d12-a3e6-fcac8579a7c2",
+    "username": "rudra",
+    "passwordHash": "b8dc497af59bc796c6efb7c744a303078b77ed36737b3e3a753cd863f6e5584f412a07f77997a8d7a82f245b2ce4f75d91ed6ca655b76ff0a7a197a468b7a0df",
+    "passwordSalt": "0e7b90557bdfa4cf00b023ee260dba84",
+    "level": 1,
+    "xp": 0,
+    "coins": 2450,
+    "gems": 120,
+    "createdAt": "2026-09-15T19:22:11.016Z",
+    "sessionToken": "d5cd5c13-95de-4909-b069-1b923613cbc1"
+  },
+  {
+    "id": "669db2fb-2a8f-4d16-a697-73fca672ecd4",
+    "username": "Deva",
+    "passwordHash": "edd074ecb1c72ce2a5212763fa26e6c8acd7525a883f44232b5fb129352b8c4a2ea915cf7ff5ff5bc39c2e187b019dfa2eeffb53ecf820e30ee1f22b33e31947",
+    "passwordSalt": "a39afc19a93216a7ade8d08ffa985f83",
+    "level": 1,
+    "xp": 0,
+    "coins": 2450,
+    "gems": 120,
+    "createdAt": "2026-09-16T15:52:58.578Z",
+    "sessionToken": "fde9369d-b628-46ad-8bf8-e63bc719186b"
+  },
+  {
+    "id": "d9206dc3-2f18-499c-ad5c-7f138538ae19",
+    "username": "rudra1",
+    "passwordHash": "c3a27ec1f98a488f4dfc67cfcfcaa42fb45507b1869d14b15731503c207d1d500d0190d56c66770ad113a47526f51d93da8e85e01fc9faf5947803bb2fd0e2df",
+    "passwordSalt": "f5489d79886108f537290895d1e3383b",
+    "level": 1,
+    "xp": 0,
+    "coins": 2450,
+    "gems": 120,
+    "createdAt": "2026-09-16T16:37:50.071Z",
+    "sessionToken": "370e0c05-bcdf-44ab-be6e-5ea3c029b345"
+  },
+  {
+    "id": "0abd25de-b70f-4faa-9de9-3a731f72ce76",
+    "username": "rudr33",
+    "passwordHash": "e3719eb9dea74687b220c6b7ca95330e2e27466f80188f80f9862282cf5498a7580ad1e963b78d6d6cbd96bf972af29b4c4fec73e86ecd006358e2b8bc7ae24d",
+    "passwordSalt": "a5f7f3820486e47beb9efddd87bd6050",
+    "level": 1,
+    "xp": 0,
+    "coins": 2450,
+    "gems": 120,
+    "createdAt": "2026-09-16T18:04:05.028Z",
+    "sessionToken": "59c4f05f-2dae-49f5-9712-ff1a3c53a5f0"
+  }
+]
