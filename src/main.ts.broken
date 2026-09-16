@@ -1,0 +1,810 @@
+import * as THREE from "three";
+import "./style.css";
+
+import { BattleMap } from "./map/battleMap";
+import { SafeZone } from "./battle/zone";
+import { LootItem, LootType } from "./loot/item";
+import { Deployment } from "./deployment/deployment";
+
+type GameState =
+  | "LOBBY"
+  | "MATCHMAKING"
+  | "LOADING"
+  | "DEPLOYMENT"
+  | "BATTLE"
+  | "RESULTS";
+
+const scene = new THREE.Scene();
+
+scene.background = new THREE.Color(0x79bde8);
+scene.fog = new THREE.Fog(0x79bde8, 180, 520);
+
+const camera = new THREE.PerspectiveCamera(
+  65,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+
+camera.position.set(0, 8, 12);
+
+const renderer = new THREE.WebGLRenderer({
+  antialias: true,
+});
+
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+document.body.appendChild(renderer.domElement);
+
+/* =========================================================
+   LIGHTING
+========================================================= */
+
+const hemisphereLight = new THREE.HemisphereLight(
+  0xbfe8ff,
+  0x526044,
+  2.1
+);
+
+scene.add(hemisphereLight);
+
+const sun = new THREE.DirectionalLight(
+  0xffffff,
+  2.5
+);
+
+sun.position.set(120, 180, 80);
+sun.castShadow = true;
+
+sun.shadow.mapSize.width = 2048;
+sun.shadow.mapSize.height = 2048;
+
+sun.shadow.camera.left = -300;
+sun.shadow.camera.right = 300;
+sun.shadow.camera.top = 300;
+sun.shadow.camera.bottom = -300;
+
+scene.add(sun);
+
+/* =========================================================
+   GAME VARIABLES
+========================================================= */
+
+let state: GameState = "LOBBY";
+
+let battleMap: BattleMap | null = null;
+let safeZone: SafeZone | null = null;
+let deployment: Deployment | null = null;
+
+let player: THREE.Group | null = null;
+
+let playerHealth = 100;
+let playerArmor = 50;
+
+let alivePlayers = 50;
+let kills = 0;
+
+let ammo = 0;
+let medkits = 0;
+
+let currentWeapon = "FISTS";
+
+let yaw = 0;
+let pitch = -0.15;
+
+const keys = new Set<string>();
+
+/* =========================================================
+   UI HELPER
+========================================================= */
+
+function makeElement(
+  tag: string,
+  className: string,
+  text = ""
+): HTMLElement {
+  const element =
+    document.createElement(tag);
+
+  element.className = className;
+  element.textContent = text;
+
+  return element;
+}
+
+/* =========================================================
+   LOBBY UI
+========================================================= */
+
+const lobbyUI =
+  makeElement(
+    "div",
+    "gameUI lobbyUI"
+  );
+
+lobbyUI.innerHTML = `
+  <div class="lobbyTop">
+    <div>
+      <div class="brand">NEXUS</div>
+      <div class="subBrand">BATTLE CITY</div>
+    </div>
+
+    <div class="profile">
+      <div class="profileName">KING</div>
+      <div class="profileLevel">LEVEL 12</div>
+    </div>
+  </div>
+
+  <div class="lobbyCenter">
+    <div class="welcome">
+      WELCOME BACK
+    </div>
+
+    <h1>
+      ENTER THE BATTLEFIELD
+    </h1>
+
+    <div class="modeRow">
+      <button
+        class="modeButton active"
+        data-mode="SOLO"
+      >
+        SOLO
+      </button>
+
+      <button
+        class="modeButton"
+        data-mode="DUO"
+      >
+        DUO
+      </button>
+
+      <button
+        class="modeButton"
+        data-mode="SQUAD"
+      >
+        SQUAD
+      </button>
+    </div>
+
+    <button class="playButton">
+      PLAY
+    </button>
+  </div>
+
+  <div class="lobbyBottom">
+    <div>SEASON 1</div>
+    <div>50 PLAYERS ONLINE</div>
+    <div>BUILD 0.1</div>
+  </div>
+`;
+
+document.body.appendChild(lobbyUI);
+
+/* =========================================================
+   MATCHMAKING UI
+========================================================= */
+
+const matchmakingUI =
+  makeElement(
+    "div",
+    "gameUI matchmakingUI"
+  );
+
+matchmakingUI.innerHTML = `
+  <div class="matchCard">
+    <div class="matchTitle">
+      MATCHMAKING
+    </div>
+
+    <div class="matchSpinner"></div>
+
+    <div class="matchStatus">
+      SEARCHING FOR PLAYERS...
+    </div>
+  </div>
+`;
+
+document.body.appendChild(
+  matchmakingUI
+);
+
+/* =========================================================
+   LOADING UI
+========================================================= */
+
+const loadingUI =
+  makeElement(
+    "div",
+    "gameUI loadingUI"
+  );
+
+loadingUI.innerHTML = `
+  <div class="loadingCard">
+    <div class="loadingTitle">
+      LOADING BATTLEFIELD
+    </div>
+
+    <div class="loadingBar">
+      <div class="loadingFill"></div>
+    </div>
+
+    <div class="loadingPercent">
+      0%
+    </div>
+  </div>
+`;
+
+document.body.appendChild(
+  loadingUI
+);
+
+/* =========================================================
+   DEPLOYMENT UI
+========================================================= */
+
+const deploymentUI =
+  makeElement(
+    "div",
+    "gameUI deploymentUI"
+  );
+
+deploymentUI.innerHTML = `
+  <div class="deploymentTop">
+
+    <div class="deploymentStats">
+      <span>ALIVE</span>
+      <strong id="deploymentAlive">
+        50
+      </strong>
+    </div>
+
+    <div class="deploymentTimer">
+      <span id="deploymentTimer">
+        15
+      </span>
+    </div>
+
+  </div>
+
+  <div class="deploymentHelp">
+
+    <div class="helpTitle">
+      AIR CONTROLS
+    </div>
+
+    <div class="helpLine">
+      <b>W</b>
+      <span>MOVE FORWARD</span>
+    </div>
+
+    <div class="helpLine">
+      <b>A</b>
+      <span>MOVE LEFT</span>
+    </div>
+
+    <div class="helpLine">
+      <b>S</b>
+      <span>MOVE BACK</span>
+    </div>
+
+    <div class="helpLine">
+      <b>D</b>
+      <span>MOVE RIGHT</span>
+    </div>
+
+    <div class="helpLine">
+      <b>SPACE</b>
+      <span>JUMP / DEPLOY</span>
+    </div>
+
+    <div class="airMessage">
+      USE W A S D TO STEER WHILE IN AIR
+    </div>
+
+  </div>
+
+  <div class="deploymentCenter">
+    <div
+      class="deploymentStatus"
+      id="deploymentStatus"
+    >
+      WAITING FOR JUMP
+    </div>
+  </div>
+
+  <div class="altitude">
+
+    <div class="altitudeLine"></div>
+
+    <div class="altitudeText">
+      <span id="altitudeValue">
+        95
+      </span>
+      m
+    </div>
+
+  </div>
+`;
+
+document.body.appendChild(
+  deploymentUI
+);
+
+/* =========================================================
+   BATTLE HUD
+========================================================= */
+
+const battleUI =
+  makeElement(
+    "div",
+    "gameUI battleUI"
+  );
+
+battleUI.innerHTML = `
+  <div class="hudTop">
+
+    <div class="hudBox">
+      Alive
+      <strong id="aliveValue">
+        50
+      </strong>
+    </div>
+
+    <div class="hudBox">
+      Kills
+      <strong id="killsValue">
+        0
+      </strong>
+    </div>
+
+    <div
+      class="compass"
+      id="compass"
+    >
+      N
+    </div>
+
+  </div>
+
+  <div class="miniMap">
+    <div class="miniMapPlayer"></div>
+  </div>
+
+  <div
+    class="zoneWarning"
+    id="zoneWarning"
+  >
+    SAFE ZONE
+  </div>
+
+  <div class="weaponHUD">
+    <div id="weaponName">
+      FISTS
+    </div>
+
+    <div>
+      <span id="ammoValue">
+        0
+      </span>
+    </div>
+  </div>
+
+  <div class="healthHUD">
+
+    <div class="healthRow">
+      <span>♥</span>
+
+      <div class="healthBar">
+        <div
+          class="healthFill"
+          id="healthFill"
+        ></div>
+      </div>
+
+      <strong id="healthValue">
+        100
+      </strong>
+    </div>
+
+    <div class="armorRow">
+      <span>◆</span>
+
+      <div class="armorBar">
+        <div
+          class="armorFill"
+          id="armorFill"
+        ></div>
+      </div>
+
+      <strong id="armorValue">
+        50
+      </strong>
+    </div>
+
+  </div>
+
+  <div class="crosshair">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <div class="battleHelp">
+    <b>W A S D</b> MOVE
+    <br />
+    <b>SHIFT</b> SPRINT
+    <br />
+    <b>E</b> PICK UP
+    <br />
+    <b>H</b> MEDKIT
+    <br />
+    <b>SPACE</b> JUMP
+    <br />
+    <b>CLICK</b> SHOOT
+  </div>
+`;
+
+document.body.appendChild(
+  battleUI
+);
+
+/* =========================================================
+   RESULTS UI
+========================================================= */
+
+const resultsUI =
+  makeElement(
+    "div",
+    "gameUI resultsUI"
+  );
+
+resultsUI.innerHTML = `
+  <div class="resultsCard">
+
+    <div class="resultsTitle">
+      MATCH COMPLETE
+    </div>
+
+    <div class="resultsPlacement">
+      #<span id="placementValue">
+        12
+      </span>
+    </div>
+
+    <div class="resultsStats">
+
+      <div>
+        <span>KILLS</span>
+        <strong id="resultKills">
+          0
+        </strong>
+      </div>
+
+      <div>
+        <span>ALIVE</span>
+        <strong id="resultAlive">
+          1
+        </strong>
+      </div>
+
+    </div>
+
+    <button class="returnButton">
+      RETURN TO LOBBY
+    </button>
+
+  </div>
+`;
+
+document.body.appendChild(
+  resultsUI
+);
+
+/* =========================================================
+   UI REFERENCES
+========================================================= */
+
+const playButton =
+  lobbyUI.querySelector<HTMLButtonElement>(
+    ".playButton"
+  )!;
+
+const modeButtons =
+  Array.from(
+    lobbyUI.querySelectorAll<HTMLButtonElement>(
+      ".modeButton"
+    )
+  );
+
+const loadingFill =
+  loadingUI.querySelector<HTMLElement>(
+    ".loadingFill"
+  )!;
+
+const loadingPercent =
+  loadingUI.querySelector<HTMLElement>(
+    ".loadingPercent"
+  )!;
+
+const deploymentTimerElement =
+  deploymentUI.querySelector<HTMLElement>(
+    "#deploymentTimer"
+  )!;
+
+const deploymentStatus =
+  deploymentUI.querySelector<HTMLElement>(
+    "#deploymentStatus"
+  )!;
+
+const altitudeValue =
+  deploymentUI.querySelector<HTMLElement>(
+    "#altitudeValue"
+  )!;
+
+const deploymentAlive =
+  deploymentUI.querySelector<HTMLElement>(
+    "#deploymentAlive"
+  )!;
+
+const aliveValue =
+  battleUI.querySelector<HTMLElement>(
+    "#aliveValue"
+  )!;
+
+const killsValue =
+  battleUI.querySelector<HTMLElement>(
+    "#killsValue"
+  )!;
+
+const weaponName =
+  battleUI.querySelector<HTMLElement>(
+    "#weaponName"
+  )!;
+
+const ammoValue =
+  battleUI.querySelector<HTMLElement>(
+    "#ammoValue"
+  )!;
+
+const healthValue =
+  battleUI.querySelector<HTMLElement>(
+    "#healthValue"
+  )!;
+
+const armorValue =
+  battleUI.querySelector<HTMLElement>(
+    "#armorValue"
+  )!;
+
+const healthFill =
+  battleUI.querySelector<HTMLElement>(
+    "#healthFill"
+  )!;
+
+const armorFill =
+  battleUI.querySelector<HTMLElement>(
+    "#armorFill"
+  )!;
+
+const zoneWarning =
+  battleUI.querySelector<HTMLElement>(
+    "#zoneWarning"
+  )!;
+
+const returnButton =
+  resultsUI.querySelector<HTMLButtonElement>(
+    ".returnButton"
+  )!;
+
+const placementValue =
+  resultsUI.querySelector<HTMLElement>(
+    "#placementValue"
+  )!;
+
+const resultKills =
+  resultsUI.querySelector<HTMLElement>(
+    "#resultKills"
+  )!;
+
+const resultAlive =
+  resultsUI.querySelector<HTMLElement>(
+    "#resultAlive"
+  )!;
+
+/* =========================================================
+   STATE MANAGEMENT
+========================================================= */
+
+function setState(
+  nextState: GameState
+) {
+  state = nextState;
+
+  /*
+    THIS IS THE MAIN FIX.
+
+    The old cyberpunk environment only exists
+    visually in the lobby.
+
+    As soon as we leave the lobby it is hidden.
+  */
+
+    state === "LOBBY";
+
+  lobbyUI.style.display =
+    state === "LOBBY"
+      ? "flex"
+      : "none";
+
+  matchmakingUI.style.display =
+    state === "MATCHMAKING"
+      ? "flex"
+      : "none";
+
+  loadingUI.style.display =
+    state === "LOADING"
+      ? "flex"
+      : "none";
+
+  deploymentUI.style.display =
+    state === "DEPLOYMENT"
+      ? "flex"
+      : "none";
+
+  battleUI.style.display =
+    state === "BATTLE"
+      ? "flex"
+      : "none";
+
+  resultsUI.style.display =
+    state === "RESULTS"
+      ? "flex"
+      : "none";
+
+  lobbyUI.style.pointerEvents =
+    state === "LOBBY"
+      ? "auto"
+      : "none";
+
+  deploymentUI.style.pointerEvents =
+    state === "DEPLOYMENT"
+      ? "auto"
+      : "none";
+
+  renderer.domElement.style.pointerEvents =
+    state === "BATTLE" ||
+    state === "DEPLOYMENT"
+      ? "auto"
+      : "none";
+}
+
+/* =========================================================
+   MODE
+========================================================= */
+
+let selectedMode = "SOLO";
+
+modeButtons.forEach(
+  (button) => {
+    button.addEventListener(
+      "click",
+      () => {
+        modeButtons.forEach(
+          (other) => {
+            other.classList.remove(
+              "active"
+            );
+          }
+        );
+
+        button.classList.add(
+          "active"
+        );
+
+        selectedMode =
+          button.dataset.mode ??
+          "SOLO";
+      }
+    );
+  }
+);
+
+/* =========================================================
+   PLAY
+========================================================= */
+
+playButton.addEventListener(
+  "click",
+  () => {
+    startMatchmaking();
+  }
+);
+
+function startMatchmaking() {
+  /*
+    Hide lobby IMMEDIATELY.
+  */
+
+
+  setState("MATCHMAKING");
+
+  window.setTimeout(
+    () => {
+      startLoading();
+    },
+    1200
+  );
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+function startLoading() {
+  /*
+    Keep the cyberpunk lobby hidden.
+  */
+
+
+  setState("LOADING");
+
+  let progress = 0;
+
+  const interval =
+    window.setInterval(
+      () => {
+        progress += 4;
+
+        if (progress >= 100) {
+          progress = 100;
+
+          window.clearInterval(
+            interval
+          );
+
+          window.setTimeout(
+            () => {
+              startDeployment();
+            },
+            350
+          );
+        }
+
+        loadingFill.style.width =
+          `${progress}%`;
+
+        loadingPercent.textContent =
+          `${progress}%`;
+      },
+      55
+    );
+}
+
+/* =========================================================
+   DEPLOYMENT START
+========================================================= */
+
+function startDeployment() {
+  // Create the real battle-royale town map.
+  battleMap = new BattleMap(scene);
+  safeZone = new SafeZone(scene);
+  deployment = new Deployment(scene);
+
+  /*
+    The lobby MUST remain hidden.
+  */
+
+
+  /*
+    Create the real battle map.
+  */
+
+
+  safeZone =
+    new SafeZone(scene);
+

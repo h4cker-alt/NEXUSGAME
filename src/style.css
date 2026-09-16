@@ -1,0 +1,7674 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #020611;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  user-select: none;
+}
+
+canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ==========================================
+   LOBBY
+========================================== */
+
+#lobbyUI {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+
+  opacity: 0;
+  visibility: hidden;
+
+  pointer-events: auto;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(1, 6, 17, 0.97) 0%,
+      rgba(1, 8, 20, 0.78) 34%,
+      rgba(1, 8, 20, 0.18) 62%,
+      rgba(1, 6, 17, 0.72) 100%
+    );
+
+  transition:
+    opacity 0.35s ease,
+    visibility 0.35s ease;
+}
+
+#lobbyUI.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ==========================================
+   TOP
+========================================== */
+
+.lobby-top {
+  position: absolute;
+  top: 22px;
+  left: 48px;
+  right: 48px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.game-logo {
+  font-size: clamp(36px, 4vw, 62px);
+  font-weight: 1000;
+  line-height: 0.8;
+  letter-spacing: 9px;
+
+  color: #f4fbff;
+
+  text-shadow:
+    0 0 8px rgba(0, 234, 255, 0.7),
+    0 0 28px rgba(0, 234, 255, 0.35);
+}
+
+.game-subtitle {
+  margin-top: 9px;
+
+  font-size: 10px;
+  letter-spacing: 6px;
+  font-weight: 700;
+
+  color: #00eaff;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  min-width: 240px;
+  padding: 10px 15px;
+
+  background: rgba(3, 13, 29, 0.88);
+  border: 1px solid rgba(0, 220, 255, 0.25);
+
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.35),
+    inset 0 0 25px rgba(0, 190, 255, 0.03);
+
+  backdrop-filter: blur(12px);
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+
+  display: grid;
+  place-items: center;
+
+  background: #09dff5;
+
+  color: #021018;
+
+  font-size: 19px;
+  font-weight: 1000;
+}
+
+.profile strong,
+.profile span {
+  display: block;
+}
+
+.profile strong {
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.profile span {
+  margin-top: 5px;
+
+  color: #71869d;
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+/* ==========================================
+   TOP RIGHT ICONS
+========================================== */
+
+.profile::after {
+  content: "⚙   ◉   ⏻";
+
+  margin-left: auto;
+
+  color: #86a6bf;
+  font-size: 17px;
+  letter-spacing: 7px;
+}
+
+/* ==========================================
+   CENTER / LEFT CONTENT
+========================================== */
+
+.lobby-center {
+  position: absolute;
+
+  left: 4%;
+  top: 51%;
+
+  transform: translateY(-50%);
+
+  width: min(570px, 44vw);
+}
+
+.welcome {
+  position: relative;
+
+  color: #9db3c9;
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 6px;
+
+  margin-bottom: 15px;
+}
+
+.welcome::after {
+  content: "";
+
+  display: inline-block;
+
+  width: 80px;
+  height: 1px;
+
+  margin-left: 15px;
+
+  vertical-align: middle;
+
+  background: #31566e;
+}
+
+.lobby-center h1 {
+  margin: 0;
+
+  font-size: clamp(45px, 5vw, 72px);
+  line-height: 0.91;
+
+  font-weight: 1000;
+
+  letter-spacing: -3px;
+
+  color: white;
+}
+
+.lobby-center h1 span {
+  color: #00eaff;
+
+  text-shadow:
+    0 0 12px rgba(0, 234, 255, 0.6),
+    0 0 35px rgba(0, 234, 255, 0.25);
+}
+
+.description {
+  width: 475px;
+  max-width: 100%;
+
+  margin: 23px 0;
+
+  color: #9eafc1;
+
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+/* ==========================================
+   GAME MODE
+========================================== */
+
+.mode-title {
+  margin-bottom: 9px;
+
+  color: #a7b8ca;
+
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 4px;
+}
+
+.mode-selector {
+  display: flex;
+  gap: 8px;
+}
+
+.mode {
+  position: relative;
+
+  width: 130px;
+  height: 72px;
+
+  padding: 11px 14px;
+
+  text-align: left;
+
+  color: white;
+
+  background: rgba(4, 16, 34, 0.82);
+
+  border: 1px solid rgba(76, 119, 149, 0.6);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.mode:hover {
+  transform: translateY(-2px);
+
+  border-color: #00eaff;
+
+  background: rgba(0, 195, 225, 0.08);
+}
+
+.mode.active {
+  border: 2px solid #00eaff;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(0, 234, 255, 0.16),
+      rgba(0, 50, 75, 0.55)
+    );
+
+  box-shadow:
+    0 0 20px rgba(0, 234, 255, 0.15),
+    inset 0 0 20px rgba(0, 234, 255, 0.04);
+}
+
+.mode.active::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 3px;
+
+  background: #00eaff;
+
+  box-shadow: 0 0 12px #00eaff;
+}
+
+.mode b {
+  display: block;
+
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.mode span {
+  display: block;
+
+  margin-top: 8px;
+
+  color: #7f96ac;
+
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+/* ==========================================
+   PLAY
+========================================== */
+
+#playButton {
+  position: relative;
+
+  width: 270px;
+  height: 67px;
+
+  margin-top: 20px;
+
+  border: none;
+
+  cursor: pointer;
+
+  color: #021019;
+
+  background: #00eaff;
+
+  clip-path: polygon(
+    0 0,
+    94% 0,
+    100% 25%,
+    100% 100%,
+    6% 100%,
+    0 72%
+  );
+
+  box-shadow:
+    0 0 25px rgba(0, 234, 255, 0.25);
+
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease;
+}
+
+#playButton:hover {
+  transform: translateX(7px);
+
+  filter: brightness(1.12);
+
+  box-shadow:
+    0 0 40px rgba(0, 234, 255, 0.55);
+}
+
+#playButton span {
+  display: block;
+
+  font-size: 23px;
+  font-weight: 1000;
+
+  letter-spacing: 5px;
+}
+
+#playButton small {
+  display: block;
+
+  margin-top: 4px;
+
+  font-size: 8px;
+  font-weight: 700;
+
+  letter-spacing: 3px;
+}
+
+/* ==========================================
+   BOTTOM CARDS
+========================================== */
+
+.lobby-bottom {
+  position: absolute;
+
+  left: 48px;
+  bottom: 32px;
+
+  display: flex;
+  gap: 7px;
+}
+
+.stat-card {
+  min-width: 145px;
+
+  padding: 12px 17px;
+
+  background: rgba(3, 13, 29, 0.87);
+
+  border: 1px solid rgba(67, 107, 135, 0.45);
+
+  box-shadow:
+    inset 0 0 25px rgba(0, 200, 255, 0.02);
+}
+
+.stat-card span {
+  display: block;
+
+  color: #73879d;
+
+  font-size: 8px;
+  letter-spacing: 3px;
+}
+
+.stat-card strong {
+  display: block;
+
+  margin-top: 6px;
+
+  font-size: 17px;
+  letter-spacing: 1px;
+}
+
+.online {
+  color: #43f596;
+}
+
+/* ==========================================
+   MATCHMAKING
+========================================== */
+
+#matchUI,
+#loadingUI,
+#resultsUI {
+  position: fixed;
+  inset: 0;
+
+  z-index: 30;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(0, 170, 220, 0.08),
+      rgba(1, 5, 15, 0.97) 65%
+    );
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transition: 0.3s ease;
+}
+
+#matchUI.visible,
+#loadingUI.visible,
+#resultsUI.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.match-box {
+  width: 430px;
+
+  padding: 45px;
+
+  text-align: center;
+
+  background: rgba(4, 14, 31, 0.96);
+
+  border: 1px solid rgba(0, 234, 255, 0.35);
+
+  box-shadow:
+    0 0 80px rgba(0, 234, 255, 0.08);
+}
+
+.match-spinner {
+  width: 48px;
+  height: 48px;
+
+  margin: 0 auto 25px;
+
+  border: 3px solid rgba(0, 234, 255, 0.12);
+  border-top-color: #00eaff;
+
+  border-radius: 50%;
+
+  animation: spin 0.8s linear infinite;
+}
+
+#matchTitle {
+  font-size: 20px;
+  font-weight: 900;
+
+  letter-spacing: 4px;
+}
+
+#matchText {
+  margin-top: 10px;
+
+  color: #8195ab;
+
+  font-size: 11px;
+}
+
+.match-progress,
+.loading-bar {
+  height: 4px;
+
+  margin-top: 28px;
+
+  overflow: hidden;
+
+  background: #17263b;
+}
+
+#matchProgress,
+#loadingProgress {
+  width: 0;
+  height: 100%;
+
+  background: #00eaff;
+
+  box-shadow: 0 0 15px #00eaff;
+}
+
+/* ==========================================
+   LOADING
+========================================== */
+
+.loading-content {
+  width: 520px;
+
+  text-align: center;
+}
+
+.loading-logo {
+  font-size: 64px;
+  font-weight: 1000;
+  letter-spacing: 13px;
+
+  text-shadow:
+    0 0 25px rgba(0, 234, 255, 0.45);
+}
+
+.loading-title {
+  margin-top: 4px;
+
+  color: #00eaff;
+
+  font-size: 10px;
+  letter-spacing: 6px;
+}
+
+#loadingText {
+  margin-top: 14px;
+
+  color: #71869d;
+
+  font-size: 9px;
+  letter-spacing: 3px;
+}
+
+/* ==========================================
+   BATTLE HUD
+========================================== */
+
+#battleHUD {
+  position: fixed;
+  inset: 0;
+
+  z-index: 20;
+
+  opacity: 0;
+  visibility: hidden;
+
+  pointer-events: none;
+}
+
+#battleHUD.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.hud-top {
+  position: absolute;
+
+  top: 24px;
+  left: 25px;
+  right: 25px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hud-brand {
+  margin-right: auto;
+
+  font-size: 23px;
+  font-weight: 1000;
+
+  letter-spacing: 5px;
+
+  text-shadow: 0 0 15px #00eaff;
+}
+
+.alive-box,
+.kill-box {
+  min-width: 100px;
+
+  padding: 8px 14px;
+
+  background: rgba(4, 12, 27, 0.8);
+
+  border: 1px solid rgba(0, 234, 255, 0.22);
+}
+
+.alive-box span,
+.kill-box span {
+  display: block;
+
+  color: #71849a;
+
+  font-size: 8px;
+  letter-spacing: 2px;
+}
+
+.alive-box strong,
+.kill-box strong {
+  font-size: 18px;
+}
+
+.zone-info {
+  position: absolute;
+
+  top: 78px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  padding: 9px 25px;
+
+  text-align: center;
+
+  background: rgba(4, 12, 27, 0.8);
+
+  border: 1px solid rgba(0, 234, 255, 0.25);
+}
+
+.zone-info div {
+  color: #71849a;
+
+  font-size: 8px;
+  letter-spacing: 2px;
+}
+
+.zone-info strong {
+  display: block;
+
+  margin: 2px 0;
+
+  font-size: 20px;
+}
+
+.zone-info small {
+  color: #00eaff;
+
+  font-size: 8px;
+}
+
+.player-status {
+  position: absolute;
+
+  left: 25px;
+  bottom: 35px;
+
+  width: 270px;
+}
+
+.bar-label {
+  display: flex;
+  justify-content: space-between;
+
+  margin: 5px 0;
+
+  color: #91a1b5;
+
+  font-size: 9px;
+}
+
+.bar {
+  height: 7px;
+
+  background: rgba(10, 20, 35, 0.9);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bar > div {
+  height: 100%;
+  width: 100%;
+
+  background: #4dff82;
+
+  transition: width 0.2s;
+}
+
+.armor-bar > div {
+  background: #00cfff;
+}
+
+.weapon-info {
+  position: absolute;
+
+  right: 30px;
+  bottom: 35px;
+
+  text-align: right;
+}
+
+.weapon-name {
+  font-size: 22px;
+  font-weight: 900;
+
+  letter-spacing: 2px;
+}
+
+.ammo {
+  margin-top: 3px;
+
+  color: #00eaff;
+
+  font-size: 16px;
+}
+
+.controls {
+  position: absolute;
+
+  left: 50%;
+  bottom: 10px;
+
+  transform: translateX(-50%);
+
+  color: rgba(180, 195, 215, 0.6);
+
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+#pickupMessage {
+  position: absolute;
+
+  left: 50%;
+  bottom: 130px;
+
+  transform:
+    translateX(-50%)
+    translateY(10px);
+
+  padding: 10px 18px;
+
+  background: rgba(0, 234, 255, 0.1);
+
+  border: 1px solid #00eaff;
+
+  color: #00eaff;
+
+  font-size: 10px;
+  letter-spacing: 2px;
+
+  opacity: 0;
+
+  transition: 0.2s;
+}
+
+#pickupMessage.show {
+  opacity: 1;
+
+  transform:
+    translateX(-50%)
+    translateY(0);
+}
+
+/* ==========================================
+   RESULTS
+========================================== */
+
+.results-box {
+  width: 460px;
+
+  padding: 50px;
+
+  text-align: center;
+
+  background: rgba(5, 15, 32, 0.98);
+
+  border: 1px solid rgba(0, 234, 255, 0.35);
+}
+
+.results-small {
+  color: #71849b;
+
+  font-size: 9px;
+  letter-spacing: 4px;
+}
+
+.results-box h1 {
+  margin: 12px 0 35px;
+
+  color: #00eaff;
+
+  font-size: 55px;
+  letter-spacing: 4px;
+
+  text-shadow:
+    0 0 25px rgba(0, 234, 255, 0.4);
+}
+
+.result-stats {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+}
+
+.result-stats span,
+.result-stats strong {
+  display: block;
+}
+
+.result-stats span {
+  color: #71839b;
+
+  font-size: 8px;
+  letter-spacing: 2px;
+}
+
+.result-stats strong {
+  margin-top: 6px;
+
+  font-size: 26px;
+}
+
+#returnLobby {
+  width: 100%;
+  height: 52px;
+
+  margin-top: 35px;
+
+  border: none;
+
+  background: #00eaff;
+
+  color: #031018;
+
+  font-weight: 900;
+  letter-spacing: 2px;
+
+  cursor: pointer;
+}
+
+#returnLobby:hover {
+  box-shadow: 0 0 30px rgba(0, 234, 255, 0.45);
+}
+
+/* ==========================================
+   ANIMATION
+========================================== */
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 900px) {
+  .lobby-top {
+    left: 20px;
+    right: 20px;
+  }
+
+  .profile {
+    min-width: auto;
+  }
+
+  .profile::after {
+    display: none;
+  }
+
+  .lobby-center {
+    left: 5%;
+    width: 90%;
+  }
+
+  .lobby-center h1 {
+    font-size: 48px;
+  }
+
+  .description {
+    width: 100%;
+  }
+
+  .mode {
+    width: 105px;
+  }
+
+  .lobby-bottom {
+    left: 20px;
+    bottom: 15px;
+  }
+
+  .stat-card {
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 600px) {
+  .game-logo {
+    font-size: 34px;
+    letter-spacing: 6px;
+  }
+
+  .profile {
+    display: none;
+  }
+
+  .lobby-center h1 {
+    font-size: 40px;
+  }
+
+  .mode-selector {
+    width: 100%;
+  }
+
+  .mode {
+    flex: 1;
+    width: auto;
+  }
+
+  .lobby-bottom {
+    display: none;
+  }
+}
+
+/* ==========================================
+   CLICKABLE LOBBY CONTROLS
+========================================== */
+
+#lobbyUI {
+  pointer-events: auto !important;
+}
+
+#lobbyUI button {
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 100;
+}
+
+#playButton,
+.mode {
+  cursor: pointer;
+}
+
+#playButton:active,
+.mode:active {
+  transform: scale(0.98);
+}
+
+/* =========================================================
+   LOBBY FIX
+========================================================= */
+
+.lobbyUI {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  display: flex;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: stretch !important;
+  padding: 32px 40px !important;
+  box-sizing: border-box !important;
+  z-index: 100 !important;
+  pointer-events: auto !important;
+  color: white !important;
+}
+
+.lobbyTop {
+  width: 100% !important;
+  display: flex;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+}
+
+.lobbyCenter {
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  display: flex;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  width: min(800px, 90vw) !important;
+}
+
+.lobbyCenter h1 {
+  display: block !important;
+  margin: 12px 0 30px !important;
+  font-size: clamp(32px, 5vw, 72px) !important;
+  color: white !important;
+}
+
+.welcome {
+  display: block !important;
+  color: #20dfff !important;
+  font-size: 18px !important;
+  letter-spacing: 6px !important;
+}
+
+.modeRow {
+  display: flex;
+  gap: 12px !important;
+  margin-bottom: 25px !important;
+}
+
+.modeButton,
+.playButton {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  position: relative !important;
+  z-index: 101 !important;
+}
+
+.modeButton {
+  min-width: 120px !important;
+  padding: 14px 24px !important;
+}
+
+.playButton {
+  min-width: 240px !important;
+  padding: 18px 40px !important;
+  font-size: 24px !important;
+}
+
+.lobbyBottom {
+  width: 100% !important;
+  display: flex;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.profile {
+  display: flex;
+  align-items: center !important;
+  gap: 15px !important;
+}
+
+.brand {
+  color: #20dfff !important;
+  font-size: 32px !important;
+  font-weight: 900 !important;
+}
+
+.subBrand {
+  color: white !important;
+  font-size: 12px !important;
+  letter-spacing: 4px !important;
+}
+
+/* =========================================================
+   NEXUS LOBBY - CLEAN UI FIX
+========================================================= */
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #020711;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#app {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Three.js canvas */
+canvas {
+  position: fixed;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Game UI layers are controlled by main.ts state */
+.gameUI {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.matchmakingUI,
+.loadingUI,
+.deploymentUI,
+.battleUI,
+.resultsUI {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+
+/* Lobby header */
+.lobbyUI .brand {
+  position: fixed;
+  top: 28px;
+  left: 34px;
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: #ffffff;
+}
+
+.lobbyUI .subBrand {
+  position: fixed;
+  top: 61px;
+  left: 36px;
+  font-size: 11px;
+  letter-spacing: 5px;
+  color: #08d9ff;
+}
+
+/* Player profile */
+.lobbyUI .profile {
+  position: fixed;
+  top: 28px;
+  right: 34px;
+  min-width: 210px;
+  padding: 12px 16px;
+  border: 1px solid rgba(0, 210, 255, 0.35);
+  background: rgba(3, 13, 25, 0.9);
+  box-sizing: border-box;
+  color: #fff;
+  font-size: 14px;
+}
+
+/* Main lobby content */
+.lobbyUI .lobbyCenter {
+  position: relative;
+  width: min(700px, 90vw);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.lobbyUI .welcome {
+  margin-bottom: 28px;
+  color: #00e5ff;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 7px;
+}
+
+.lobbyUI h1 {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(46px, 6vw, 78px);
+  line-height: 0.98;
+  font-weight: 900;
+  letter-spacing: -2px;
+}
+
+/* Mode selection */
+.lobbyUI .modeButtons {
+  display: flex;
+  gap: 12px;
+  margin-top: 38px;
+}
+
+.lobbyUI .modeButton {
+  min-width: 112px;
+  height: 44px;
+  border: 1px solid rgba(0, 220, 255, 0.45);
+  background: rgba(8, 21, 36, 0.95);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  pointer-events: auto !important;
+}
+
+.lobbyUI .modeButton:hover,
+.lobbyUI .modeButton.active {
+  background: #00d9ff;
+  color: #001019;
+}
+
+/* Play button */
+.lobbyUI .playButton {
+  width: 225px;
+  height: 62px;
+  margin-top: 24px;
+  border: 0;
+  background: #ffffff;
+  color: #020711;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  cursor: pointer;
+  pointer-events: auto !important;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.lobbyUI .playButton:hover {
+  transform: translateY(-2px);
+  background: #00e5ff;
+}
+
+/* Footer */
+.lobbyUI .season,
+.lobbyUI .online,
+.lobbyUI .build {
+  position: fixed;
+  bottom: 22px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.lobbyUI .season {
+  left: 34px;
+}
+
+.lobbyUI .online {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.lobbyUI .build {
+  right: 34px;
+}
+
+/* Never let normal hidden text occupy the page */
+.hidden,
+[hidden] {
+  display: none;
+}
+
+
+/* =========================================================
+   STATE UI VISIBILITY - MAIN.TS CONTROLS DISPLAY
+========================================================= */
+
+.gameUI {
+  box-sizing: border-box;
+}
+
+.gameUI[style*="display: none"] {
+  pointer-events: none !important;
+}
+
+.lobbyUI {
+  pointer-events: auto !important;
+}
+
+.lobbyUI button {
+  pointer-events: auto !important;
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   INITIAL UI VISIBILITY
+   main.ts inline display values override these when state changes
+========================================================= */
+
+.matchmakingUI,
+.loadingUI,
+.deploymentUI,
+.battleUI,
+.resultsUI {
+  display: none;
+}
+
+.lobbyUI {
+  display: flex;
+}
+
+
+/* FINAL UI STATE FIX */
+#app > .matchmakingUI,
+#app > .loadingUI,
+#app > .deploymentUI,
+#app > .battleUI,
+#app > .resultsUI {
+  display: none;
+}
+
+.gameUI.matchmakingUI,
+.gameUI.loadingUI,
+.gameUI.deploymentUI,
+.gameUI.battleUI,
+.gameUI.resultsUI {
+  display: none;
+}
+
+
+/* =========================================================
+   GAME STATE DISPLAY
+   main.ts controls which screen is visible
+========================================================= */
+
+.gameUI {
+  box-sizing: border-box;
+}
+
+.lobbyUI,
+.matchmakingUI,
+.loadingUI,
+.deploymentUI,
+.battleUI,
+.resultsUI {
+  box-sizing: border-box;
+}
+
+/* Never force display with !important here.
+   setState() in main.ts owns display state. */
+
+
+/* =========================================================
+   NEXUS LOBBY — RESTORE ORIGINAL DARK LOOK
+========================================================= */
+
+.lobbyUI {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 100vw;
+  height: 100vh;
+
+  background: #020711 !important;
+  background-image:
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(0, 210, 255, 0.055),
+      transparent 38%
+    ) !important;
+
+  color: #ffffff;
+  pointer-events: auto !important;
+  overflow: hidden;
+}
+
+/* Cyberpunk grid */
+.lobbyUI::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+
+  background-image:
+    linear-gradient(
+      rgba(0, 180, 255, 0.035) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(0, 180, 255, 0.035) 1px,
+      transparent 1px
+    );
+
+  background-size: 50px 50px;
+
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0,0,0,0.9) 35%,
+    rgba(0,0,0,0.9) 100%
+  );
+}
+
+/* Top section */
+.lobbyUI .lobbyTop {
+  position: fixed;
+  top: 28px;
+  left: 34px;
+  right: 34px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  z-index: 5;
+}
+
+.lobbyUI .brand {
+  position: static !important;
+  color: #00e5ff !important;
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 5px;
+}
+
+.lobbyUI .subBrand {
+  position: static !important;
+  margin-top: 3px;
+  color: #ffffff !important;
+  font-size: 11px;
+  letter-spacing: 4px;
+}
+
+/* Profile */
+.lobbyUI .profile {
+  position: static !important;
+  min-width: 225px;
+  padding: 14px 18px;
+
+  display: flex;
+  gap: 18px;
+  align-items: center;
+
+  border: 1px solid rgba(0, 210, 255, 0.35);
+  background: rgba(3, 13, 25, 0.92);
+
+  color: #ffffff;
+  box-shadow: 0 0 30px rgba(0, 180, 255, 0.08);
+}
+
+.lobbyUI .profileName {
+  font-weight: 800;
+}
+
+.lobbyUI .profileLevel {
+  color: #cbd5e1;
+}
+
+/* Center */
+.lobbyUI .lobbyCenter {
+  position: relative;
+  z-index: 5;
+
+  width: min(760px, 90vw);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.lobbyUI .welcome {
+  margin-bottom: 34px;
+
+  color: #00e5ff !important;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 7px;
+}
+
+.lobbyUI h1 {
+  margin: 0;
+
+  color: #ffffff !important;
+
+  font-size: clamp(48px, 6vw, 76px);
+  line-height: 0.96;
+  font-weight: 900;
+  letter-spacing: -2px;
+
+  text-shadow: 0 0 35px rgba(255,255,255,0.04);
+}
+
+/* Mode buttons */
+.lobbyUI .modeRow {
+  display: flex;
+  gap: 12px;
+  margin-top: 38px;
+}
+
+.lobbyUI .modeButton {
+  width: 112px;
+  height: 44px;
+
+  border: 1px solid rgba(0, 210, 255, 0.45);
+  background: #061321;
+
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+
+  cursor: pointer;
+  pointer-events: auto !important;
+}
+
+.lobbyUI .modeButton.active {
+  background: #00d9ff;
+  color: #001019;
+}
+
+.lobbyUI .modeButton:hover {
+  border-color: #00e5ff;
+  background: #092235;
+}
+
+/* PLAY */
+.lobbyUI .playButton {
+  width: 225px;
+  height: 62px;
+
+  margin-top: 25px;
+
+  border: none;
+  background: #ffffff;
+
+  color: #020711;
+
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: 3px;
+
+  cursor: pointer;
+  pointer-events: auto !important;
+
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
+}
+
+.lobbyUI .playButton:hover {
+  background: #00e5ff;
+  transform: translateY(-2px);
+}
+
+/* Bottom */
+.lobbyUI .lobbyBottom {
+  position: fixed;
+  left: 30px;
+  right: 30px;
+  bottom: 22px;
+
+  display: flex;
+  justify-content: space-between;
+
+  color: rgba(255,255,255,0.75);
+  font-size: 12px;
+  letter-spacing: 1px;
+
+  z-index: 5;
+}
+
+/* Hide 3D canvas behind lobby */
+body:has(.lobbyUI[style*="display: flex"]) canvas {
+  z-index: 0;
+}
+
+
+/* =========================================================
+   3D BATTLE ROYALE LOBBY
+========================================================= */
+
+.lobbyUI {
+  background: transparent !important;
+  background-image: none !important;
+  pointer-events: auto !important;
+}
+
+.lobbyUI::before {
+  display: none !important;
+}
+
+/* Dark cinematic overlay over the 3D world */
+.lobbyUI::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(0,0,0,0.30),
+      transparent 30%,
+      rgba(0,0,0,0.20) 70%,
+      rgba(0,0,0,0.55)
+    );
+}
+
+/* Top navigation */
+.lobbyUI .lobbyTop {
+  top: 18px;
+  left: 24px;
+  right: 24px;
+}
+
+/* Logo */
+.lobbyUI .brand {
+  color: #ffffff !important;
+  font-size: 22px;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+
+.lobbyUI .subBrand {
+  color: rgba(255,255,255,0.85) !important;
+  letter-spacing: 3px;
+}
+
+/* Profile */
+.lobbyUI .profile {
+  min-width: 220px;
+  padding: 10px 15px;
+
+  background: rgba(0,0,0,0.48);
+  border: 1px solid rgba(255,255,255,0.25);
+
+  box-shadow: 0 4px 18px rgba(0,0,0,0.35);
+}
+
+/* Center content */
+.lobbyUI .lobbyCenter {
+  position: absolute;
+  left: 50%;
+  bottom: 92px;
+  transform: translateX(-50%);
+
+  width: auto;
+}
+
+/* Hide the giant title from the old lobby */
+.lobbyUI .welcome {
+  display: none;
+}
+
+.lobbyUI h1 {
+  display: none;
+}
+
+/* Mode selector */
+.lobbyUI .modeRow {
+  margin-top: 0;
+  padding: 6px;
+
+  background: rgba(0,0,0,0.48);
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+.lobbyUI .modeButton {
+  width: 105px;
+  height: 38px;
+
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(20,20,20,0.65);
+
+  color: #ffffff;
+}
+
+.lobbyUI .modeButton.active {
+  background: #f4c400;
+  color: #111111;
+}
+
+/* START button like the reference */
+.lobbyUI .playButton {
+  position: fixed;
+
+  left: 24px;
+  bottom: 72px;
+
+  width: 135px;
+  height: 48px;
+
+  margin: 0;
+
+  background: #f2c400;
+  color: #111111;
+
+  border: 2px solid rgba(0,0,0,0.45);
+
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: 1px;
+
+  box-shadow:
+    0 4px 14px rgba(0,0,0,0.45);
+
+  cursor: pointer;
+}
+
+.lobbyUI .playButton:hover {
+  background: #ffd633;
+  transform: translateY(-1px);
+}
+
+/* Bottom information */
+.lobbyUI .lobbyBottom {
+  left: 24px;
+  right: 24px;
+  bottom: 18px;
+
+  color: #ffffff;
+  text-shadow: 0 2px 5px rgba(0,0,0,0.9);
+}
+
+
+/* =========================================================
+   NEXUS — POLISHED 3D BATTLE ROYALE LOBBY
+========================================================= */
+
+.lobbyUI {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  display: flex;
+
+  background: transparent !important;
+  pointer-events: auto !important;
+}
+
+/* Cinematic screen shading */
+.lobbyUI::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0,0,0,.42) 0%,
+      transparent 25%,
+      transparent 72%,
+      rgba(0,0,0,.32) 100%
+    ),
+    linear-gradient(
+      0deg,
+      rgba(0,0,0,.52) 0%,
+      transparent 28%,
+      transparent 75%,
+      rgba(0,0,0,.22) 100%
+    );
+}
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.lobbyUI .lobbyTop {
+  position: fixed !important;
+  top: 20px !important;
+  left: 24px !important;
+  right: 24px !important;
+
+  display: flex !important;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  z-index: 20;
+}
+
+.lobbyUI .brand {
+  position: static !important;
+
+  color: #ffffff !important;
+  font-size: 28px !important;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 3px;
+
+  text-shadow:
+    0 2px 8px rgba(0,0,0,.8);
+}
+
+.lobbyUI .subBrand {
+  position: static !important;
+
+  margin-top: 3px;
+  color: #dcecff !important;
+
+  font-size: 10px !important;
+  letter-spacing: 4px;
+}
+
+/* Profile card */
+.lobbyUI .profile {
+  position: static !important;
+
+  min-width: 220px !important;
+  height: 48px;
+
+  padding: 0 16px !important;
+
+  display: flex !important;
+  align-items: center;
+  gap: 16px;
+
+  background: rgba(7,13,20,.82) !important;
+  border: 1px solid rgba(255,255,255,.22) !important;
+
+  box-shadow:
+    0 8px 30px rgba(0,0,0,.35);
+
+  backdrop-filter: blur(8px);
+}
+
+.lobbyUI .profileName {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.lobbyUI .profileLevel {
+  color: #b8c5d1;
+  font-size: 12px;
+}
+
+/* =========================================================
+   CENTER CHARACTER AREA
+========================================================= */
+
+.lobbyUI .lobbyCenter {
+  position: fixed !important;
+
+  left: 50% !important;
+  top: 50% !important;
+
+  transform: translate(-50%, -50%) !important;
+
+  width: 360px !important;
+
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+
+  z-index: 10;
+
+  pointer-events: none;
+}
+
+/* Remove old giant title */
+.lobbyUI .welcome,
+.lobbyUI h1 {
+  display: none !important;
+}
+
+/* =========================================================
+   GAME MODE BAR
+========================================================= */
+
+.lobbyUI .modeRow {
+  display: flex !important;
+
+  padding: 5px !important;
+  margin: 0 !important;
+
+  gap: 4px !important;
+
+  background: rgba(3,8,13,.78) !important;
+  border: 1px solid rgba(255,255,255,.20) !important;
+
+  box-shadow:
+    0 8px 25px rgba(0,0,0,.45);
+
+  backdrop-filter: blur(8px);
+
+  pointer-events: auto !important;
+}
+
+.lobbyUI .modeButton {
+  width: 86px !important;
+  height: 34px !important;
+
+  border: 0 !important;
+
+  background: transparent !important;
+  color: #ffffff !important;
+
+  font-size: 11px !important;
+  font-weight: 800;
+
+  letter-spacing: 1px;
+
+  cursor: pointer;
+  pointer-events: auto !important;
+}
+
+.lobbyUI .modeButton:hover {
+  background: rgba(255,255,255,.12) !important;
+}
+
+.lobbyUI .modeButton.active {
+  background: #f2c400 !important;
+  color: #111111 !important;
+}
+
+/* =========================================================
+   START BUTTON — BOTTOM LEFT
+========================================================= */
+
+.lobbyUI .playButton {
+  position: fixed !important;
+
+  left: 26px !important;
+  bottom: 62px !important;
+
+  width: 175px !important;
+  height: 54px !important;
+
+  margin: 0 !important;
+
+  background: linear-gradient(
+    180deg,
+    #ffd72e,
+    #e7b800
+  ) !important;
+
+  color: #111111 !important;
+
+  border: 2px solid rgba(0,0,0,.55) !important;
+
+  font-size: 19px !important;
+  font-weight: 900 !important;
+  letter-spacing: 2px !important;
+
+  box-shadow:
+    0 5px 20px rgba(0,0,0,.45),
+    inset 0 1px rgba(255,255,255,.55);
+
+  cursor: pointer;
+  pointer-events: auto !important;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+}
+
+.lobbyUI .playButton::before {
+  content: "START";
+}
+
+.lobbyUI .playButton {
+  font-size: 0;
+}
+
+.lobbyUI .playButton:hover {
+  filter: brightness(1.08);
+  transform: translateY(-2px);
+}
+
+.lobbyUI .playButton:active {
+  transform: translateY(1px);
+}
+
+/* =========================================================
+   BOTTOM INFORMATION
+========================================================= */
+
+.lobbyUI .lobbyBottom {
+  position: fixed !important;
+
+  left: 26px !important;
+  right: 26px !important;
+  bottom: 20px !important;
+
+  display: flex !important;
+  justify-content: space-between;
+
+  color: rgba(255,255,255,.82) !important;
+
+  font-size: 11px !important;
+  letter-spacing: 1px;
+
+  text-shadow:
+    0 2px 5px rgba(0,0,0,.9);
+
+  z-index: 20;
+}
+
+/* =========================================================
+   SMALL LEFT MENU
+========================================================= */
+
+.lobbyUI .lobbyTop::after {
+  content:
+    "CHARACTER     INVENTORY     STORE     SETTINGS";
+
+  position: fixed;
+
+  left: 26px;
+  top: 92px;
+
+  color: rgba(255,255,255,.82);
+
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+
+  text-shadow:
+    0 2px 5px rgba(0,0,0,.9);
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .lobbyUI .profile {
+    min-width: 150px !important;
+  }
+
+  .lobbyUI .lobbyTop::after {
+    display: none;
+  }
+
+  .lobbyUI .playButton {
+    left: 18px !important;
+    bottom: 60px !important;
+    width: 145px !important;
+  }
+
+  .lobbyUI .modeButton {
+    width: 72px !important;
+  }
+}
+
+
+/* =========================================================
+   GAME HUD + MATCHMAKING + LOADING FIX
+========================================================= */
+
+/* Every game screen fills the viewport */
+.matchmakingUI,
+.loadingUI,
+.deploymentUI,
+.battleUI,
+.resultsUI {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   MATCHMAKING — CENTER
+========================================================= */
+
+.matchmakingUI {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500 !important;
+  pointer-events: none;
+}
+
+.matchCard {
+  width: 360px;
+  padding: 32px 36px;
+  box-sizing: border-box;
+
+  text-align: center;
+
+  background: rgba(3, 10, 18, 0.92);
+  border: 1px solid rgba(0, 220, 255, 0.55);
+
+  box-shadow:
+    0 0 40px rgba(0, 190, 255, 0.18),
+    0 20px 60px rgba(0, 0, 0, 0.5);
+
+  backdrop-filter: blur(12px);
+}
+
+.matchTitle {
+  color: #00e5ff;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 5px;
+  margin-bottom: 24px;
+}
+
+.matchStatus {
+  color: #ffffff;
+  font-size: 13px;
+  letter-spacing: 2px;
+}
+
+.matchSpinner {
+  width: 34px;
+  height: 34px;
+  margin: 0 auto 22px;
+
+  border: 3px solid rgba(255,255,255,.15);
+  border-top-color: #00e5ff;
+  border-radius: 50%;
+
+  animation: nexusSpin .8s linear infinite;
+}
+
+@keyframes nexusSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   LOADING — CENTER
+========================================================= */
+
+.loadingUI {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500 !important;
+  pointer-events: none;
+}
+
+.loadingCard {
+  width: 460px;
+  padding: 34px;
+
+  box-sizing: border-box;
+  text-align: center;
+
+  background: rgba(3, 10, 18, 0.94);
+  border: 1px solid rgba(0, 220, 255, 0.55);
+
+  box-shadow:
+    0 0 50px rgba(0, 190, 255, 0.18),
+    0 25px 70px rgba(0,0,0,.55);
+
+  backdrop-filter: blur(12px);
+}
+
+.loadingTitle {
+  margin-bottom: 22px;
+
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 4px;
+}
+
+.loadingBar {
+  width: 100%;
+  height: 6px;
+
+  overflow: hidden;
+
+  background: rgba(255,255,255,.12);
+}
+
+.loadingFill {
+  width: 0%;
+  height: 100%;
+
+  background: #00d9ff;
+
+  box-shadow:
+    0 0 15px rgba(0,217,255,.8);
+}
+
+.loadingPercent {
+  margin-top: 12px;
+
+  color: #00e5ff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+/* =========================================================
+   DEPLOYMENT HUD
+========================================================= */
+
+.deploymentUI {
+  z-index: 300 !important;
+  color: #ffffff;
+  pointer-events: none;
+}
+
+.deploymentTop {
+  position: absolute;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  gap: 35px;
+
+  padding: 10px 22px;
+
+  background: rgba(0,0,0,.45);
+  border: 1px solid rgba(255,255,255,.18);
+
+  backdrop-filter: blur(7px);
+}
+
+.deploymentStats {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.deploymentStats span {
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+.deploymentStats strong {
+  font-size: 18px;
+}
+
+.deploymentTimer {
+  color: #00e5ff;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.deploymentHelp {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+
+  padding: 15px 18px;
+
+  background: rgba(0,0,0,.48);
+  border-left: 2px solid #00d9ff;
+
+  color: #ffffff;
+
+  font-size: 12px;
+  line-height: 1.7;
+
+  text-shadow: 0 2px 5px rgba(0,0,0,.9);
+}
+
+.helpTitle {
+  margin-bottom: 7px;
+
+  color: #00e5ff;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.helpLine {
+  display: flex;
+  gap: 10px;
+}
+
+.helpLine b {
+  min-width: 48px;
+  color: #ffffff;
+}
+
+.airMessage {
+  margin-top: 8px;
+  color: #00e5ff;
+  font-size: 10px;
+}
+
+/* =========================================================
+   BATTLE HUD
+========================================================= */
+
+.battleUI {
+  z-index: 300 !important;
+  color: #ffffff;
+  pointer-events: none;
+}
+
+/* Top stats */
+.hudTop {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hudBox {
+  min-width: 80px;
+  padding: 8px 14px;
+
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+
+  background: rgba(0,0,0,.52);
+  border: 1px solid rgba(255,255,255,.18);
+
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.hudBox strong {
+  color: #00e5ff;
+}
+
+/* Compass */
+.compass {
+  min-width: 90px;
+  padding: 10px;
+
+  text-align: center;
+
+  background: rgba(0,0,0,.55);
+  border: 1px solid rgba(255,255,255,.18);
+
+  font-size: 16px;
+  font-weight: 900;
+}
+
+/* Minimap */
+.miniMap {
+  position: absolute;
+  top: 20px;
+  right: 22px;
+
+  width: 150px;
+  height: 150px;
+
+  border: 2px solid rgba(255,255,255,.7);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(40,80,50,.8),
+      rgba(80,100,70,.8)
+    );
+
+  box-shadow:
+    0 5px 20px rgba(0,0,0,.45);
+}
+
+.miniMapPlayer {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+
+  width: 10px;
+  height: 10px;
+
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+
+  background: #00e5ff;
+  box-shadow: 0 0 12px #00e5ff;
+}
+
+/* Zone warning */
+.zoneWarning {
+  position: absolute;
+  top: 190px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  padding: 7px 18px;
+
+  background: rgba(0,0,0,.62);
+  border: 1px solid rgba(255,210,0,.55);
+
+  color: #ffd400;
+
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+/* Battle controls */
+.battleHelp {
+  position: absolute;
+  left: 22px;
+  bottom: 28px;
+
+  padding: 13px 17px;
+
+  background: rgba(0,0,0,.55);
+  border-left: 2px solid #00d9ff;
+
+  color: #ffffff;
+
+  font-size: 12px;
+  line-height: 1.8;
+
+  text-shadow: 0 2px 5px rgba(0,0,0,.9);
+}
+
+.battleHelp b {
+  color: #00e5ff;
+}
+
+/* Weapon Slots */
+.weaponHUD {
+  position: absolute;
+  left: 50%;
+  bottom: 82px;
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+
+  padding: 4px;
+
+  background: rgba(0,0,0,.58);
+  border: 1px solid rgba(255,255,255,.18);
+
+  pointer-events: none;
+}
+
+.weaponSlot {
+  position: relative;
+
+  width: 86px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(25,25,25,.72);
+  border: 1px solid rgba(255,255,255,.20);
+
+  box-sizing: border-box;
+}
+
+.weaponSlot.active {
+  background: rgba(0,229,255,.18);
+  border: 2px solid #00e5ff;
+  box-shadow: 0 0 12px rgba(0,229,255,.28);
+}
+
+.slotNumber {
+  position: absolute;
+  top: 3px;
+  left: 6px;
+
+  font-size: 10px;
+  font-weight: 900;
+  color: rgba(255,255,255,.55);
+}
+
+.weaponSlot.active .slotNumber {
+  color: #00e5ff;
+}
+
+.weaponIcon {
+  position: absolute;
+  left: 9px;
+  right: 9px;
+  top: 16px;
+  height: 31px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.weaponIcon svg {
+  width: 100%;
+  height: 100%;
+
+  fill: #f4f4f4;
+  stroke: #f4f4f4;
+  stroke-width: 0.8;
+
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,.85));
+}
+
+.slotAmmo {
+  position: absolute;
+  right: 6px;
+  bottom: 4px;
+
+  color: white;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.weaponAmmo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  min-width: 72px;
+  padding: 0 8px;
+
+  text-align: center;
+}
+
+#weaponName {
+  color: #00e5ff;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+#ammoValue {
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+/* Health */
+.healthHUD {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+
+  width: 300px;
+}
+
+.healthRow,
+.armorRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 6px;
+}
+
+.healthBar,
+.armorBar {
+  flex: 1;
+  height: 7px;
+
+  background: rgba(0,0,0,.6);
+  overflow: hidden;
+}
+
+.healthFill,
+.armorFill {
+  width: 100%;
+  height: 100%;
+}
+
+.healthFill {
+  background: #35e06f;
+}
+
+.armorFill {
+  background: #45a9ff;
+}
+
+/* Crosshair */
+.crosshair {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+
+  width: 26px;
+  height: 26px;
+
+  transform: translate(-50%, -50%);
+}
+
+.crosshair span {
+  position: absolute;
+
+  width: 7px;
+  height: 2px;
+
+  background: #ffffff;
+
+  box-shadow: 0 0 5px rgba(0,0,0,.8);
+}
+
+.crosshair span:nth-child(1) {
+  left: 0;
+  top: 12px;
+}
+
+.crosshair span:nth-child(2) {
+  right: 0;
+  top: 12px;
+}
+
+.crosshair span:nth-child(3) {
+  left: 12px;
+  top: 0;
+
+  width: 2px;
+  height: 7px;
+}
+
+.crosshair span:nth-child(4) {
+  left: 12px;
+  bottom: 0;
+
+  width: 2px;
+  height: 7px;
+}
+
+/* =========================================================
+   RESULTS
+========================================================= */
+
+.resultsUI {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500 !important;
+}
+
+.resultsCard {
+  width: 420px;
+  padding: 35px;
+
+  text-align: center;
+
+  background: rgba(3,10,18,.94);
+  border: 1px solid rgba(0,220,255,.5);
+
+  box-shadow: 0 20px 70px rgba(0,0,0,.55);
+}
+
+
+/* =========================================================
+   NEXUS — PREMIUM BATTLE ROYALE LOBBY
+   CSS ONLY — GAME LOGIC UNCHANGED
+========================================================= */
+
+.lobbyUI {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+
+  overflow: hidden;
+
+  background: transparent !important;
+  color: #fff;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+}
+
+/* Cinematic vignette */
+.lobbyUI::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0,0,0,.55),
+      transparent 28%,
+      transparent 72%,
+      rgba(0,0,0,.45)
+    ),
+    linear-gradient(
+      0deg,
+      rgba(0,0,0,.65),
+      transparent 30%,
+      rgba(0,0,0,.20)
+    );
+
+  z-index: -1;
+}
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.lobbyUI .lobbyTop {
+  position: absolute !important;
+
+  top: 22px !important;
+  left: 28px !important;
+  right: 28px !important;
+
+  display: flex !important;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  z-index: 20;
+}
+
+/* Logo */
+
+.lobbyUI .brand {
+  position: static !important;
+
+  color: #ffffff !important;
+
+  font-size: 30px !important;
+  font-weight: 900 !important;
+
+  letter-spacing: 4px;
+
+  text-shadow:
+    0 2px 10px rgba(0,0,0,.9);
+}
+
+.lobbyUI .subBrand {
+  position: static !important;
+
+  margin-top: 2px;
+
+  color: #00d9ff !important;
+
+  font-size: 10px !important;
+  font-weight: 700;
+
+  letter-spacing: 4px;
+
+  text-shadow:
+    0 2px 8px rgba(0,0,0,.8);
+}
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+.lobbyUI .profile {
+  position: static !important;
+
+  min-width: 245px !important;
+  height: 52px;
+
+  box-sizing: border-box;
+
+  display: flex !important;
+  align-items: center;
+  gap: 18px;
+
+  padding: 0 18px !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(4,15,25,.92),
+      rgba(3,8,14,.78)
+    ) !important;
+
+  border: 1px solid rgba(0,217,255,.35) !important;
+
+  box-shadow:
+    0 10px 35px rgba(0,0,0,.45),
+    inset 0 0 20px rgba(0,217,255,.03);
+
+  backdrop-filter: blur(12px);
+}
+
+.lobbyUI .profileName {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.lobbyUI .profileLevel {
+  color: #9fb1c0;
+  font-size: 12px;
+}
+
+/* =========================================================
+   TOP NAVIGATION
+========================================================= */
+
+.lobbyUI .lobbyTop::after {
+  content:
+    "CHARACTER    INVENTORY    ARMORY    STORE";
+
+  position: absolute;
+
+  top: 72px;
+  left: 0;
+
+  color: rgba(255,255,255,.78);
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 2px;
+
+  text-shadow:
+    0 2px 8px rgba(0,0,0,.9);
+}
+
+/* =========================================================
+   CHARACTER AREA
+========================================================= */
+
+.lobbyUI .lobbyCenter {
+  position: absolute !important;
+
+  left: 50% !important;
+  top: 50% !important;
+
+  transform: translate(-50%, -50%) !important;
+
+  width: 360px !important;
+
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+
+  z-index: 10;
+
+  pointer-events: none;
+}
+
+/* Remove old giant title */
+
+.lobbyUI .welcome,
+.lobbyUI h1 {
+  display: none !important;
+}
+
+/* =========================================================
+   MODE SELECTOR
+========================================================= */
+
+.lobbyUI .modeRow {
+  display: flex !important;
+
+  gap: 3px !important;
+
+  padding: 5px !important;
+
+  margin: 0 !important;
+
+  background:
+    rgba(3,8,13,.78) !important;
+
+  border:
+    1px solid rgba(255,255,255,.18) !important;
+
+  box-shadow:
+    0 12px 35px rgba(0,0,0,.45);
+
+  backdrop-filter: blur(10px);
+
+  pointer-events: auto !important;
+}
+
+.lobbyUI .modeButton {
+  width: 88px !important;
+  height: 36px !important;
+
+  border: none !important;
+
+  background: transparent !important;
+
+  color: rgba(255,255,255,.85) !important;
+
+  font-size: 11px !important;
+  font-weight: 900;
+
+  letter-spacing: 1px;
+
+  cursor: pointer;
+
+  transition:
+    background .15s ease,
+    color .15s ease;
+}
+
+.lobbyUI .modeButton:hover {
+  background:
+    rgba(0,217,255,.12) !important;
+
+  color: #ffffff !important;
+}
+
+.lobbyUI .modeButton.active {
+  background:
+    #00d9ff !important;
+
+  color:
+    #001018 !important;
+
+  box-shadow:
+    0 0 18px rgba(0,217,255,.25);
+}
+
+/* =========================================================
+   START BUTTON
+========================================================= */
+
+.lobbyUI .playButton {
+  position: fixed !important;
+
+  left: 28px !important;
+  bottom: 68px !important;
+
+  width: 190px !important;
+  height: 58px !important;
+
+  margin: 0 !important;
+
+  border: none !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffd92f,
+      #e4ae00
+    ) !important;
+
+  color: #111111 !important;
+
+  font-size: 0 !important;
+  font-weight: 900 !important;
+
+  letter-spacing: 2px;
+
+  box-shadow:
+    0 8px 25px rgba(0,0,0,.45),
+    0 0 0 1px rgba(0,0,0,.35),
+    inset 0 1px rgba(255,255,255,.65);
+
+  cursor: pointer;
+
+  pointer-events: auto !important;
+
+  transition:
+    transform .15s ease,
+    filter .15s ease;
+}
+
+.lobbyUI .playButton::before {
+  content: "START";
+
+  font-size: 18px;
+  letter-spacing: 3px;
+}
+
+.lobbyUI .playButton:hover {
+  filter: brightness(1.08);
+
+  transform:
+    translateY(-3px);
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.5),
+    0 0 22px rgba(255,210,0,.22);
+}
+
+.lobbyUI .playButton:active {
+  transform:
+    translateY(0);
+}
+
+/* =========================================================
+   LEFT INFORMATION PANEL
+========================================================= */
+
+.lobbyUI .lobbyCenter::before {
+  content:
+    "BATTLE ROYALE\A\A SOLO  •  50 PLAYERS\A MAP  •  BATTLE CITY";
+
+  white-space: pre;
+
+  position: fixed;
+
+  left: -455px;
+  bottom: -190px;
+
+  width: 210px;
+
+  padding: 17px;
+
+  box-sizing: border-box;
+
+  color: rgba(255,255,255,.82);
+
+  background:
+    rgba(2,8,14,.66);
+
+  border-left:
+    2px solid #00d9ff;
+
+  font-size: 10px;
+  line-height: 1.55;
+  letter-spacing: 1px;
+
+  text-align: left;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.35);
+
+  backdrop-filter: blur(8px);
+}
+
+/* =========================================================
+   BOTTOM BAR
+========================================================= */
+
+.lobbyUI .lobbyBottom {
+  position: absolute !important;
+
+  left: 28px !important;
+  right: 28px !important;
+  bottom: 20px !important;
+
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+
+  color:
+    rgba(255,255,255,.82) !important;
+
+  font-size: 10px !important;
+  font-weight: 700;
+
+  letter-spacing: 1.5px;
+
+  text-shadow:
+    0 2px 7px rgba(0,0,0,.9);
+
+  z-index: 20;
+}
+
+.lobbyUI .lobbyBottom div:nth-child(2) {
+  color: #00d9ff !important;
+}
+
+/* =========================================================
+   DECORATIVE HUD LINES
+========================================================= */
+
+.lobbyUI .lobbyCenter::after {
+  content: "";
+
+  position: fixed;
+
+  left: 50%;
+  top: calc(50% + 110px);
+
+  transform: translateX(-50%);
+
+  width: 240px;
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(0,217,255,.5),
+      transparent
+    );
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .lobbyUI .profile {
+    min-width: 165px !important;
+    height: 44px;
+  }
+
+  .lobbyUI .brand {
+    font-size: 22px !important;
+  }
+
+  .lobbyUI .lobbyTop::after {
+    display: none;
+  }
+
+  .lobbyUI .playButton {
+    left: 18px !important;
+    bottom: 60px !important;
+    width: 150px !important;
+  }
+
+  .lobbyUI .modeButton {
+    width: 70px !important;
+  }
+
+  .lobbyUI .lobbyCenter::before {
+    display: none;
+  }
+}
+
+
+/* =========================================================
+   NEXUS BATTLE CITY — FULL LOBBY
+========================================================= */
+
+.lobbyUI {
+  position: fixed !important;
+  inset: 0 !important;
+  overflow: hidden !important;
+  background: transparent !important;
+  color: #fff;
+  pointer-events: auto !important;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* cinematic darkening */
+.lobbyUI::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  background:
+    linear-gradient(90deg,
+      rgba(0,0,0,.48),
+      transparent 27%,
+      transparent 73%,
+      rgba(0,0,0,.42)),
+    linear-gradient(0deg,
+      rgba(0,0,0,.55),
+      transparent 30%,
+      rgba(0,0,0,.18));
+}
+
+/* =========================================================
+   TOP NAV
+========================================================= */
+
+.nexusNav {
+  position: absolute;
+  top: 14px;
+  left: 20px;
+  right: 20px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+
+  z-index: 50;
+}
+
+.nexusLogo {
+  width: 235px;
+  padding-left: 8px;
+
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 3px;
+
+  text-shadow: 0 2px 8px #000;
+}
+
+.nexusLogo span {
+  display: block;
+  margin-top: -2px;
+
+  color: #00d9ff;
+  font-size: 9px;
+  letter-spacing: 4px;
+}
+
+.navTabs {
+  height: 54px;
+
+  display: flex;
+  align-items: stretch;
+
+  background: rgba(3,12,23,.78);
+  border: 1px solid rgba(255,255,255,.10);
+
+  backdrop-filter: blur(10px);
+}
+
+.navTab {
+  min-width: 105px;
+
+  border: 0;
+  border-right: 1px solid rgba(255,255,255,.07);
+
+  background: transparent;
+
+  color: #d9e4ed;
+
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+
+  cursor: pointer;
+}
+
+.navTab:hover,
+.navTab.active {
+  color: #fff;
+  background: rgba(0,190,255,.20);
+  box-shadow: inset 0 -3px #00d9ff;
+}
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+.playerProfile {
+  margin-left: auto;
+
+  width: 285px;
+  height: 54px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 5px 10px;
+
+  box-sizing: border-box;
+
+  background: rgba(3,12,22,.88);
+  border: 1px solid rgba(255,255,255,.16);
+
+  backdrop-filter: blur(12px);
+}
+
+.profileAvatar {
+  width: 40px;
+  height: 40px;
+
+  display: grid;
+  place-items: center;
+
+  background:
+    linear-gradient(135deg,#152c42,#050b12);
+
+  border: 1px solid #00d9ff;
+
+  color: #00d9ff;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  margin-left: 10px;
+}
+
+.profileInfo strong {
+  font-size: 13px;
+}
+
+.profileInfo span {
+  color: #9eb0bf;
+  font-size: 10px;
+}
+
+.levelBar {
+  width: 85px;
+  height: 5px;
+
+  margin-left: auto;
+
+  background: #243443;
+}
+
+.levelBar i {
+  display: block;
+  width: 55%;
+  height: 100%;
+  background: #00d9ff;
+}
+
+.profileArrow {
+  margin-left: 12px;
+  font-size: 27px;
+}
+
+/* =========================================================
+   CURRENCY
+========================================================= */
+
+.currencyBar {
+  position: absolute;
+  top: 80px;
+  right: 20px;
+
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  gap: 3px;
+
+  z-index: 50;
+}
+
+.currencyBar span,
+.currencyBar b {
+  min-width: 48px;
+  height: 34px;
+
+  display: grid;
+  place-items: center;
+
+  padding: 0 8px;
+
+  box-sizing: border-box;
+
+  background: rgba(3,11,20,.85);
+  border: 1px solid rgba(255,255,255,.12);
+
+  font-size: 11px;
+}
+
+.currencyBar b {
+  color: #00d9ff;
+  font-size: 17px;
+}
+
+/* =========================================================
+   LEFT COLUMN
+========================================================= */
+
+.lobbyLeft {
+  position: absolute;
+  top: 155px;
+  left: 20px;
+
+  width: 335px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  z-index: 40;
+}
+
+.lobbyPanel,
+.battleModePanel {
+  position: relative;
+
+  box-sizing: border-box;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(4,17,29,.91),
+      rgba(3,8,15,.78)
+    );
+
+  border: 1px solid rgba(0,217,255,.32);
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.35);
+
+  backdrop-filter: blur(8px);
+}
+
+/* season */
+
+.seasonPanel {
+  height: 145px;
+  padding: 17px;
+}
+
+.panelTitle {
+  font-size: 23px;
+  font-weight: 900;
+}
+
+.panelAccent {
+  margin-top: 2px;
+  color: #ffd21c;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.seasonBadge {
+  position: absolute;
+  right: 28px;
+  top: 23px;
+
+  width: 65px;
+  height: 65px;
+
+  display: grid;
+  place-items: center;
+
+  border: 3px solid #8cb8e8;
+  border-radius: 50%;
+
+  color: #72b9ff;
+  font-size: 30px;
+}
+
+.levelText {
+  position: absolute;
+  left: 17px;
+  bottom: 35px;
+
+  width: 280px;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.levelText span {
+  float: right;
+  color: #bdcad5;
+}
+
+.progressBar {
+  position: absolute;
+  left: 17px;
+  bottom: 20px;
+
+  width: 280px;
+  height: 5px;
+
+  background: #23384a;
+}
+
+.progressBar i {
+  display: block;
+  width: 35%;
+  height: 100%;
+  background: #00cfff;
+}
+
+.panelArrow {
+  position: absolute;
+  right: 13px;
+  bottom: 12px;
+  font-size: 26px;
+}
+
+/* missions */
+
+.missionsPanel {
+  padding: 14px 15px 0;
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+
+  padding-bottom: 11px;
+
+  border-bottom: 1px solid rgba(255,255,255,.10);
+
+  font-size: 12px;
+}
+
+.panelHeader span {
+  color: #fff;
+}
+
+.mission {
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  border-bottom: 1px solid rgba(255,255,255,.07);
+
+  font-size: 11px;
+}
+
+.mission b {
+  width: 21px;
+  height: 21px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid #cbd8e3;
+}
+
+.mission small {
+  margin-left: auto;
+  color: #b9c6d0;
+}
+
+.panelFooter {
+  height: 39px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  color: #cbd9e5;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+/* weapon */
+
+.weaponPromo {
+  height: 125px;
+  padding: 70px 15px 10px;
+
+  overflow: hidden;
+}
+
+.weaponGraphic {
+  position: absolute;
+  left: 25px;
+  top: 18px;
+
+  color: #00d9ff;
+  font-size: 42px;
+
+  transform: rotate(-8deg);
+}
+
+.weaponPromo strong,
+.weaponPromo span {
+  position: relative;
+  display: block;
+
+  font-size: 13px;
+}
+
+.weaponPromo span {
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.weaponPromo > b {
+  position: absolute;
+  right: 16px;
+  bottom: 18px;
+  font-size: 27px;
+}
+
+/* =========================================================
+   BATTLE MODE
+========================================================= */
+
+.battleModePanel {
+  padding: 10px;
+
+  border-color: rgba(255,205,0,.55);
+}
+
+.battleModeHeader {
+  height: 53px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0 10px;
+
+  background: rgba(255,255,255,.04);
+}
+
+.battleModeHeader strong,
+.battleModeHeader span {
+  display: block;
+}
+
+.battleModeHeader strong {
+  font-size: 13px;
+}
+
+.battleModeHeader span {
+  margin-top: 2px;
+  color: #a9b9c7;
+  font-size: 10px;
+}
+
+.battleModeHeader > b {
+  font-size: 27px;
+}
+
+.battleModePanel .modeRow {
+  display: flex;
+  gap: 2px;
+
+  margin-top: 6px;
+}
+
+.battleModePanel .modeButton {
+  flex: 1;
+  height: 34px;
+
+  border: 0;
+
+  background: rgba(0,0,0,.45);
+
+  color: #fff;
+
+  font-size: 10px;
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.battleModePanel .modeButton.active {
+  background: #ffd000;
+  color: #111;
+}
+
+.battleModePanel .playButton {
+  position: relative !important;
+
+  left: auto !important;
+  bottom: auto !important;
+
+  width: 100% !important;
+  height: 57px !important;
+
+  margin-top: 7px !important;
+
+  border: 0 !important;
+
+  background:
+    linear-gradient(135deg,#ffe331,#eab500) !important;
+
+  color: #111 !important;
+
+  font-size: 26px !important;
+  font-weight: 900 !important;
+  letter-spacing: 4px;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 5px 18px rgba(0,0,0,.4);
+}
+
+.battleModePanel .playButton::before {
+  content: none !important;
+}
+
+/* =========================================================
+   RIGHT COLUMN
+========================================================= */
+
+.lobbyRight {
+  position: absolute;
+  top: 170px;
+  right: 20px;
+
+  width: 260px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  z-index: 40;
+}
+
+.nextBattlePanel {
+  height: 120px;
+
+  padding: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  box-sizing: border-box;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(15,25,43,.92),
+      rgba(4,10,18,.78)
+    );
+
+  border: 1px solid rgba(0,217,255,.42);
+}
+
+.nextBattlePanel strong {
+  font-size: 17px;
+  line-height: 1.05;
+}
+
+.nextBattlePanel b {
+  font-size: 28px;
+}
+
+.sideMenuButton {
+  width: 100%;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 13px;
+  gap: 12px;
+
+  border: 1px solid rgba(255,255,255,.12);
+
+  background: rgba(3,10,18,.78);
+
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.sideMenuButton span {
+  width: 24px;
+
+  color: #dce8f2;
+  font-size: 19px;
+}
+
+.sideMenuButton b {
+  margin-left: auto;
+  font-size: 23px;
+}
+
+.sideMenuButton:hover {
+  background: rgba(0,217,255,.16);
+  border-color: rgba(0,217,255,.5);
+}
+
+.battlePassButton span {
+  color: #ffd000;
+}
+
+.communityPanel {
+  height: 87px;
+
+  position: relative;
+
+  padding: 14px;
+
+  box-sizing: border-box;
+
+  background: rgba(3,10,18,.82);
+  border: 1px solid rgba(0,217,255,.32);
+}
+
+.communityPanel strong {
+  font-size: 11px;
+}
+
+.socialIcons {
+  display: flex;
+  gap: 12px;
+
+  margin-top: 13px;
+}
+
+.socialIcons span {
+  font-size: 21px;
+}
+
+.communityPanel > b {
+  position: absolute;
+  right: 14px;
+  top: 31px;
+  font-size: 25px;
+}
+
+.nextMapPanel {
+  height: 105px;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 14px;
+
+  box-sizing: border-box;
+
+  background: rgba(3,10,18,.82);
+  border: 1px solid rgba(0,217,255,.32);
+}
+
+.nextMapPanel div {
+  flex: 1;
+}
+
+.nextMapPanel div strong,
+.nextMapPanel div span {
+  display: block;
+}
+
+.nextMapPanel div strong {
+  font-size: 13px;
+}
+
+.nextMapPanel div span {
+  margin-top: 4px;
+  color: #b6c4cf;
+  font-size: 10px;
+}
+
+.nextMapPanel > strong {
+  font-size: 27px;
+  color: #dce7ef;
+}
+
+.nextMapPanel > b {
+  font-size: 25px;
+}
+
+/* =========================================================
+   CHARACTER / CHAT
+========================================================= */
+
+.outfitButton {
+  position: absolute;
+
+  left: 50%;
+  bottom: 115px;
+
+  transform: translateX(-50%);
+
+  height: 45px;
+  padding: 0 24px;
+
+  background: rgba(3,10,18,.82);
+
+  border: 1px solid rgba(255,255,255,.25);
+
+  color: #fff;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+
+  cursor: pointer;
+
+  z-index: 40;
+}
+
+.outfitButton:hover {
+  background: rgba(0,217,255,.18);
+  border-color: #00d9ff;
+}
+
+.worldChat {
+  position: absolute;
+
+  left: 50%;
+  bottom: 20px;
+
+  transform: translateX(-50%);
+
+  width: 560px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  padding: 0 12px;
+
+  box-sizing: border-box;
+
+  background: rgba(3,10,18,.78);
+  border: 1px solid rgba(255,255,255,.15);
+
+  color: #8295a5;
+
+  font-size: 11px;
+
+  z-index: 40;
+}
+
+.worldChat .chatIcon {
+  width: 26px;
+  height: 26px;
+
+  display: grid;
+  place-items: center;
+
+  color: #fff;
+
+  border: 1px solid rgba(255,255,255,.3);
+}
+
+.worldChat strong {
+  color: #d9e3eb;
+}
+
+.worldChat b {
+  margin-left: auto;
+  color: #fff;
+  font-size: 23px;
+}
+
+.audioButtons {
+  position: absolute;
+  right: 22px;
+  bottom: 20px;
+
+  display: flex;
+  gap: 7px;
+
+  z-index: 40;
+}
+
+.audioButtons button {
+  width: 42px;
+  height: 42px;
+
+  border: 1px solid rgba(255,255,255,.2);
+
+  background: rgba(3,10,18,.8);
+
+  color: #fff;
+
+  font-size: 17px;
+
+  cursor: pointer;
+}
+
+/* bottom */
+.lobbyUI .lobbyBottom {
+  position: fixed !important;
+
+  left: 20px !important;
+  right: 20px !important;
+  bottom: 7px !important;
+
+  z-index: 60;
+
+  pointer-events: none;
+}
+
+@media (max-width: 1100px) {
+  .navTab {
+    min-width: 75px;
+  }
+
+  .nexusLogo {
+    width: 150px;
+  }
+
+  .playerProfile {
+    width: 210px;
+  }
+
+  .lobbyLeft {
+    width: 280px;
+  }
+
+  .lobbyRight {
+    width: 220px;
+  }
+}
+
+
+/* =========================================================
+   NEXUS LOBBY — LAPTOP / 1366x768 FIT
+   Keeps ALL lobby elements inside the viewport
+========================================================= */
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden !important;
+}
+
+.lobbyUI {
+  width: 100vw !important;
+  height: 100vh !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* =========================================================
+   TOP NAV — COMPACT
+========================================================= */
+
+.nexusNav {
+  top: 10px !important;
+  left: 14px !important;
+  right: 14px !important;
+  height: 48px !important;
+}
+
+.nexusLogo {
+  width: 170px !important;
+  font-size: 25px !important;
+  letter-spacing: 3px !important;
+}
+
+.nexusLogo span {
+  font-size: 8px !important;
+  letter-spacing: 3px !important;
+}
+
+.navTabs {
+  height: 48px !important;
+  flex: 1;
+  min-width: 0;
+}
+
+.navTab {
+  min-width: 0 !important;
+  width: auto !important;
+  flex: 1;
+  padding: 0 13px !important;
+  font-size: 10px !important;
+  white-space: nowrap;
+}
+
+.playerProfile {
+  width: 205px !important;
+  min-width: 205px !important;
+  height: 48px !important;
+  padding: 4px 8px !important;
+}
+
+.profileAvatar {
+  width: 34px !important;
+  height: 34px !important;
+}
+
+.profileInfo {
+  margin-left: 7px !important;
+}
+
+.profileInfo strong {
+  font-size: 11px !important;
+}
+
+.profileInfo span {
+  font-size: 9px !important;
+}
+
+.levelBar {
+  width: 55px !important;
+}
+
+/* =========================================================
+   CURRENCY
+========================================================= */
+
+.currencyBar {
+  top: 64px !important;
+  right: 14px !important;
+  height: 30px !important;
+}
+
+.currencyBar span,
+.currencyBar b {
+  height: 29px !important;
+  min-width: 38px !important;
+  padding: 0 6px !important;
+  font-size: 9px !important;
+}
+
+/* =========================================================
+   LEFT COLUMN
+========================================================= */
+
+.lobbyLeft {
+  top: 125px !important;
+  left: 14px !important;
+
+  width: 275px !important;
+
+  gap: 7px !important;
+
+  transform: scale(.92);
+  transform-origin: top left;
+}
+
+/* Season */
+
+.seasonPanel {
+  height: 115px !important;
+  padding: 13px !important;
+}
+
+.panelTitle {
+  font-size: 19px !important;
+}
+
+.panelAccent {
+  font-size: 11px !important;
+}
+
+.seasonBadge {
+  width: 48px !important;
+  height: 48px !important;
+
+  right: 18px !important;
+  top: 18px !important;
+
+  font-size: 22px !important;
+}
+
+.levelText {
+  left: 13px !important;
+  bottom: 27px !important;
+  width: 235px !important;
+  font-size: 9px !important;
+}
+
+.progressBar {
+  left: 13px !important;
+  bottom: 14px !important;
+  width: 235px !important;
+  height: 4px !important;
+}
+
+/* Missions */
+
+.missionsPanel {
+  padding: 10px 12px 0 !important;
+}
+
+.panelHeader {
+  padding-bottom: 7px !important;
+  font-size: 10px !important;
+}
+
+.mission {
+  height: 34px !important;
+  font-size: 9px !important;
+}
+
+.mission b {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.mission small {
+  font-size: 8px !important;
+}
+
+.panelFooter {
+  height: 31px !important;
+  font-size: 8px !important;
+}
+
+/* Weapon */
+
+.weaponPromo {
+  height: 82px !important;
+  padding: 45px 12px 7px !important;
+}
+
+.weaponGraphic {
+  top: 8px !important;
+  left: 20px !important;
+  font-size: 30px !important;
+}
+
+.weaponPromo strong {
+  font-size: 10px !important;
+}
+
+.weaponPromo span {
+  font-size: 8px !important;
+}
+
+/* Battle mode */
+
+.battleModePanel {
+  padding: 7px !important;
+}
+
+.battleModeHeader {
+  height: 38px !important;
+  padding: 0 8px !important;
+}
+
+.battleModeHeader strong {
+  font-size: 10px !important;
+}
+
+.battleModeHeader span {
+  font-size: 8px !important;
+}
+
+.battleModeHeader > b {
+  font-size: 20px !important;
+}
+
+.battleModePanel .modeButton {
+  height: 27px !important;
+  font-size: 8px !important;
+}
+
+.battleModePanel .playButton {
+  height: 45px !important;
+  margin-top: 5px !important;
+
+  font-size: 20px !important;
+}
+
+/* =========================================================
+   RIGHT COLUMN
+========================================================= */
+
+.lobbyRight {
+  top: 125px !important;
+  right: 14px !important;
+
+  width: 225px !important;
+
+  gap: 5px !important;
+
+  transform: scale(.92);
+  transform-origin: top right;
+}
+
+.nextBattlePanel {
+  height: 92px !important;
+  padding: 13px !important;
+}
+
+.nextBattlePanel strong {
+  font-size: 14px !important;
+}
+
+.nextBattlePanel b {
+  font-size: 23px !important;
+}
+
+.sideMenuButton {
+  height: 38px !important;
+  padding: 0 10px !important;
+  gap: 8px !important;
+
+  font-size: 9px !important;
+}
+
+.sideMenuButton span {
+  width: 20px !important;
+  font-size: 15px !important;
+}
+
+.sideMenuButton b {
+  font-size: 19px !important;
+}
+
+.communityPanel {
+  height: 67px !important;
+  padding: 10px !important;
+}
+
+.communityPanel strong {
+  font-size: 9px !important;
+}
+
+.socialIcons {
+  margin-top: 7px !important;
+  gap: 9px !important;
+}
+
+.socialIcons span {
+  font-size: 16px !important;
+}
+
+.nextMapPanel {
+  height: 75px !important;
+  padding: 10px !important;
+}
+
+.nextMapPanel div strong {
+  font-size: 10px !important;
+}
+
+.nextMapPanel div span {
+  font-size: 8px !important;
+}
+
+/* =========================================================
+   CENTER CHARACTER BUTTON
+========================================================= */
+
+.outfitButton {
+  bottom: 78px !important;
+
+  height: 35px !important;
+
+  padding: 0 18px !important;
+
+  font-size: 9px !important;
+}
+
+/* =========================================================
+   WORLD CHAT
+========================================================= */
+
+.worldChat {
+  left: 50% !important;
+  bottom: 12px !important;
+
+  width: min(480px, 42vw) !important;
+  height: 34px !important;
+
+  font-size: 9px !important;
+}
+
+.worldChat .chatIcon {
+  width: 21px !important;
+  height: 21px !important;
+}
+
+.worldChat b {
+  font-size: 18px !important;
+}
+
+/* =========================================================
+   AUDIO
+========================================================= */
+
+.audioButtons {
+  right: 14px !important;
+  bottom: 12px !important;
+}
+
+.audioButtons button {
+  width: 34px !important;
+  height: 34px !important;
+  font-size: 14px !important;
+}
+
+/* =========================================================
+   BOTTOM BAR
+========================================================= */
+
+.lobbyUI .lobbyBottom {
+  left: 14px !important;
+  right: 14px !important;
+  bottom: 4px !important;
+
+  font-size: 8px !important;
+}
+
+/* =========================================================
+   1366x768 AND SMALL LAPTOPS
+========================================================= */
+
+@media (max-width: 1400px) {
+
+  .nexusLogo {
+    width: 145px !important;
+  }
+
+  .navTab {
+    padding: 0 8px !important;
+    font-size: 9px !important;
+  }
+
+  .playerProfile {
+    width: 180px !important;
+    min-width: 180px !important;
+  }
+
+  .lobbyLeft {
+    width: 255px !important;
+    transform: scale(.88);
+  }
+
+  .lobbyRight {
+    width: 205px !important;
+    transform: scale(.88);
+  }
+
+  .worldChat {
+    width: 380px !important;
+  }
+}
+
+/* =========================================================
+   1024px LAPTOP
+========================================================= */
+
+@media (max-width: 1150px) {
+
+  .nexusLogo {
+    width: 120px !important;
+    font-size: 21px !important;
+  }
+
+  .navTab {
+    padding: 0 5px !important;
+    font-size: 8px !important;
+  }
+
+  .playerProfile {
+    width: 150px !important;
+    min-width: 150px !important;
+  }
+
+  .profileAvatar {
+    display: none;
+  }
+
+  .levelBar {
+    display: none;
+  }
+
+  .lobbyLeft {
+    width: 225px !important;
+    transform: scale(.78);
+  }
+
+  .lobbyRight {
+    width: 180px !important;
+    transform: scale(.78);
+  }
+
+  .worldChat {
+    width: 300px !important;
+  }
+
+  .outfitButton {
+    display: none;
+  }
+}
+
+/* =========================================================
+   VERY SMALL HEIGHT — PREVENT CUT-OFF
+========================================================= */
+
+@media (max-height: 700px) {
+
+  .lobbyLeft {
+    top: 105px !important;
+    transform: scale(.78);
+  }
+
+  .lobbyRight {
+    top: 105px !important;
+    transform: scale(.78);
+  }
+
+  .currencyBar {
+    display: none;
+  }
+
+  .outfitButton {
+    bottom: 55px !important;
+  }
+}
+
+
+/* Hide the normal cursor while playing */
+body.gameMouseLocked,
+body.gameMouseLocked canvas {
+  cursor: none !important;
+}
+
+
+/* =========================================================
+   HIDE CURSOR WHILE PLAYING
+========================================================= */
+
+body.gameMouseLocked,
+body.gameMouseLocked canvas {
+  cursor: none !important;
+}
+
+
+/* Cursor is hidden once Pointer Lock is active */
+body.gameMouseLocked,
+body.gameMouseLocked canvas {
+  cursor: none !important;
+}
+
+
+/* =========================================================
+   NEXUS BATTLE CITY — FINAL LOBBY UI
+========================================================= */
+
+#lobbyUI {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(3, 8, 18, .96) 0%,
+      rgba(3, 8, 18, .78) 27%,
+      rgba(3, 8, 18, .20) 58%,
+      rgba(3, 8, 18, .70) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,.15),
+      rgba(0,0,0,.55)
+    ) !important;
+
+  backdrop-filter: blur(1px);
+}
+
+/* ---------- TOP NAV ---------- */
+
+.nexusNav {
+  position: absolute !important;
+  top: 22px !important;
+  left: 32px !important;
+  right: 32px !important;
+
+  height: 68px;
+
+  display: flex !important;
+  align-items: center !important;
+
+  padding: 0 18px;
+
+  background: rgba(3,10,20,.82);
+  border: 1px solid rgba(0,229,255,.16);
+
+  box-shadow:
+    0 12px 40px rgba(0,0,0,.35),
+    inset 0 -1px rgba(255,255,255,.04);
+
+  backdrop-filter: blur(16px);
+}
+
+/* ---------- LOGO ---------- */
+
+.nexusLogo {
+  width: 180px;
+  flex-shrink: 0;
+
+  font-size: 30px !important;
+  line-height: .85;
+
+  font-weight: 1000;
+  letter-spacing: 6px;
+
+  color: #f5fbff;
+
+  text-shadow:
+    0 0 10px rgba(0,229,255,.45);
+}
+
+.nexusLogo span {
+  display: block;
+
+  margin-top: 7px;
+
+  color: #00e5ff !important;
+  font-size: 8px !important;
+  letter-spacing: 4px;
+  font-weight: 900;
+}
+
+/* ---------- NAV TABS ---------- */
+
+.navTabs {
+  height: 100%;
+  flex: 1;
+
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+}
+
+.navTab {
+  height: 68px !important;
+
+  padding: 0 15px !important;
+
+  border: none !important;
+  border-bottom: 2px solid transparent !important;
+
+  background: transparent !important;
+
+  color: #71869b !important;
+
+  font-size: 9px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1.8px;
+
+  cursor: pointer;
+
+  transition:
+    color .2s ease,
+    background .2s ease,
+    border-color .2s ease;
+}
+
+.navTab:hover {
+  color: #dcefff !important;
+  background: rgba(0,229,255,.05) !important;
+}
+
+.navTab.active {
+  color: #00e5ff !important;
+
+  background: rgba(0,229,255,.07) !important;
+
+  border-bottom-color: #00e5ff !important;
+
+  box-shadow:
+    inset 0 -8px 20px rgba(0,229,255,.04);
+}
+
+/* ---------- PROFILE ---------- */
+
+.playerProfile {
+  width: 205px !important;
+  flex-shrink: 0;
+
+  display: grid !important;
+  grid-template-columns: 42px 1fr 12px;
+  grid-template-rows: auto auto;
+
+  column-gap: 10px;
+
+  padding: 8px 10px !important;
+
+  background: rgba(7,18,31,.9) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+.profileAvatar {
+  grid-row: 1 / 3;
+
+  width: 42px;
+  height: 42px;
+
+  display: grid;
+  place-items: center;
+
+  background:
+    linear-gradient(135deg,#00e5ff,#087c9a);
+
+  color: #021018;
+
+  font-weight: 1000;
+  font-size: 18px;
+
+  box-shadow: 0 0 18px rgba(0,229,255,.18);
+}
+
+.profileInfo strong {
+  color: white;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.profileInfo span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #72879a;
+  font-size: 8px;
+  letter-spacing: 2px;
+}
+
+.levelBar {
+  grid-column: 2;
+
+  width: 100%;
+  height: 3px;
+
+  margin-top: 6px;
+
+  background: #172532;
+}
+
+.levelBar i {
+  display: block;
+
+  width: 62%;
+  height: 100%;
+
+  background: #00e5ff;
+
+  box-shadow: 0 0 8px rgba(0,229,255,.55);
+}
+
+.profileArrow {
+  grid-column: 3;
+  grid-row: 1 / 3;
+
+  align-self: center;
+
+  color: #7890a4;
+  font-size: 22px;
+}
+
+/* ---------- CURRENCY ---------- */
+
+.currencyBar {
+  position: absolute !important;
+  top: 104px !important;
+  right: 32px !important;
+
+  display: flex !important;
+  align-items: center;
+
+  gap: 16px;
+
+  padding: 7px 12px;
+
+  background: rgba(2,9,18,.76);
+  border: 1px solid rgba(255,255,255,.08);
+
+  color: #b9cad8;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.currencyBar b {
+  color: #00e5ff !important;
+}
+
+/* ---------- LEFT SIDE ---------- */
+
+.lobbyLeft {
+  position: absolute !important;
+
+  left: 32px !important;
+  top: 118px !important;
+  bottom: 62px !important;
+
+  width: 275px !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 9px !important;
+
+  overflow: visible !important;
+}
+
+.lobbyPanel,
+.battleModePanel {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(9,22,36,.94),
+      rgba(3,11,20,.88)
+    ) !important;
+
+  border: 1px solid rgba(255,255,255,.09) !important;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.28),
+    inset 0 1px rgba(255,255,255,.035);
+
+  backdrop-filter: blur(12px);
+}
+
+/* ---------- SEASON ---------- */
+
+.seasonPanel {
+  min-height: 112px;
+  padding: 16px !important;
+
+  position: relative;
+  overflow: hidden;
+}
+
+.seasonPanel::after {
+  content: "01";
+
+  position: absolute;
+  right: -5px;
+  bottom: -25px;
+
+  font-size: 105px;
+  font-weight: 1000;
+
+  color: rgba(0,229,255,.035);
+}
+
+.panelTitle {
+  color: #71879b !important;
+  font-size: 8px !important;
+  letter-spacing: 3px;
+  font-weight: 900;
+}
+
+.panelAccent {
+  margin-top: 5px;
+
+  color: #00e5ff !important;
+  font-size: 15px !important;
+  font-weight: 1000;
+  letter-spacing: 1px;
+}
+
+.seasonBadge {
+  position: absolute !important;
+  right: 18px;
+  top: 18px;
+
+  color: #00e5ff !important;
+  font-size: 25px;
+}
+
+.levelText {
+  margin-top: 17px;
+
+  display: flex;
+  justify-content: space-between;
+
+  color: white;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.levelText span {
+  color: #74899c;
+}
+
+.progressBar {
+  height: 4px !important;
+  margin-top: 7px;
+
+  background: #172631 !important;
+}
+
+.progressBar i {
+  width: 35% !important;
+  background: #00e5ff !important;
+
+  box-shadow: 0 0 8px rgba(0,229,255,.45);
+}
+
+/* ---------- MISSIONS ---------- */
+
+.missionsPanel {
+  padding: 14px !important;
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding-bottom: 10px;
+
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+
+.panelHeader strong {
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+.panelHeader span {
+  color: #00e5ff;
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.mission {
+  display: grid !important;
+  grid-template-columns: 22px 1fr auto;
+  align-items: center;
+
+  min-height: 31px;
+
+  border-bottom: 1px solid rgba(255,255,255,.045);
+}
+
+.mission b {
+  color: #00e5ff;
+}
+
+.mission span {
+  color: #b7c5d0;
+  font-size: 9px;
+}
+
+.mission small {
+  color: #667b8d;
+  font-size: 8px;
+}
+
+.panelFooter {
+  margin-top: 11px;
+
+  color: #71889a !important;
+  font-size: 8px !important;
+  letter-spacing: 1.5px;
+}
+
+.panelFooter b {
+  color: #00e5ff;
+}
+
+/* ---------- WEAPON PROMO ---------- */
+
+.weaponPromo {
+  min-height: 66px;
+  padding: 12px 15px !important;
+
+  display: grid !important;
+  grid-template-columns: 45px 1fr 15px;
+  align-items: center;
+}
+
+.weaponGraphic {
+  font-size: 32px !important;
+  color: #00e5ff !important;
+  transform: rotate(-10deg);
+}
+
+.weaponPromo strong {
+  display: block;
+
+  color: white !important;
+  font-size: 10px !important;
+  letter-spacing: 1px;
+}
+
+.weaponPromo span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #667d90 !important;
+  font-size: 7px !important;
+  letter-spacing: 2px;
+}
+
+.weaponPromo > b {
+  color: #00e5ff !important;
+}
+
+/* ---------- BATTLE MODE ---------- */
+
+.battleModePanel {
+  margin-top: auto;
+
+  padding: 15px !important;
+}
+
+.battleModeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.battleModeHeader strong {
+  display: block;
+
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.battleModeHeader span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #667d90;
+  font-size: 7px;
+  letter-spacing: 2px;
+}
+
+.battleModeHeader > b {
+  color: #00e5ff;
+  font-size: 22px;
+}
+
+.battleModePanel .modeRow {
+  display: grid !important;
+  grid-template-columns: repeat(3,1fr);
+
+  gap: 5px !important;
+
+  margin: 13px 0 !important;
+}
+
+.battleModePanel .modeButton {
+  min-width: 0 !important;
+
+  padding: 9px 4px !important;
+
+  background: rgba(255,255,255,.035) !important;
+  border: 1px solid rgba(255,255,255,.09) !important;
+
+  color: #73899b !important;
+
+  font-size: 8px !important;
+  font-weight: 900 !important;
+}
+
+.battleModePanel .modeButton.active {
+  color: #00e5ff !important;
+
+  background: rgba(0,229,255,.10) !important;
+
+  border-color: #00e5ff !important;
+}
+
+.battleModePanel .playButton {
+  width: 100% !important;
+  height: 48px !important;
+
+  border: none !important;
+
+  background:
+    linear-gradient(90deg,#00cfe8,#00e5ff) !important;
+
+  color: #031018 !important;
+
+  font-size: 13px !important;
+  font-weight: 1000 !important;
+  letter-spacing: 4px;
+
+  box-shadow: 0 0 25px rgba(0,229,255,.20);
+
+  cursor: pointer;
+}
+
+.battleModePanel .playButton:hover {
+  box-shadow:
+    0 0 35px rgba(0,229,255,.45),
+    inset 0 0 15px rgba(255,255,255,.25);
+}
+
+/* ---------- RIGHT SIDE ---------- */
+
+.lobbyRight {
+  position: absolute !important;
+
+  right: 32px !important;
+  top: 150px !important;
+
+  width: 245px !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.nextBattlePanel {
+  min-height: 118px;
+
+  padding: 20px !important;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0,229,255,.13),
+      rgba(3,12,22,.92)
+    ) !important;
+
+  border: 1px solid rgba(0,229,255,.20) !important;
+
+  box-shadow:
+    0 15px 40px rgba(0,0,0,.3),
+    inset 0 0 35px rgba(0,229,255,.035);
+}
+
+.nextBattlePanel strong {
+  font-size: 20px !important;
+  line-height: 1.05;
+  letter-spacing: 1px;
+}
+
+.nextBattlePanel b {
+  color: #00e5ff !important;
+  font-size: 28px;
+}
+
+.sideMenuButton {
+  width: 100% !important;
+  height: 42px !important;
+
+  display: grid !important;
+  grid-template-columns: 28px 1fr 15px;
+  align-items: center;
+
+  padding: 0 13px !important;
+
+  background: rgba(4,14,25,.84) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+
+  color: #aabac7 !important;
+
+  text-align: left;
+
+  font-size: 9px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1.5px;
+
+  cursor: pointer;
+}
+
+.sideMenuButton span {
+  color: #00e5ff !important;
+  font-size: 15px !important;
+}
+
+.sideMenuButton b {
+  color: #526b7d !important;
+}
+
+.sideMenuButton:hover {
+  background: rgba(0,229,255,.08) !important;
+  border-color: rgba(0,229,255,.30) !important;
+  color: white !important;
+}
+
+/* ---------- COMMUNITY ---------- */
+
+.communityPanel {
+  min-height: 70px;
+
+  padding: 13px !important;
+
+  background: rgba(4,14,25,.84) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.communityPanel strong {
+  font-size: 8px !important;
+  letter-spacing: 2px;
+}
+
+.socialIcons {
+  display: flex;
+  gap: 16px;
+
+  margin-top: 11px;
+}
+
+.socialIcons span {
+  color: #00e5ff;
+  font-size: 16px;
+}
+
+/* ---------- NEXT MAP ---------- */
+
+.nextMapPanel {
+  min-height: 62px;
+
+  padding: 12px 14px !important;
+
+  background: rgba(4,14,25,.84) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.nextMapPanel div strong {
+  color: white !important;
+  font-size: 9px !important;
+  letter-spacing: 1.5px;
+}
+
+.nextMapPanel div span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #00e5ff !important;
+  font-size: 7px !important;
+  letter-spacing: 2px;
+}
+
+/* ---------- OUTFIT ---------- */
+
+.outfitButton {
+  position: absolute !important;
+
+  left: 50% !important;
+  bottom: 82px !important;
+
+  transform: translateX(-50%);
+
+  padding: 11px 22px !important;
+
+  background: rgba(3,12,21,.82) !important;
+  border: 1px solid rgba(0,229,255,.28) !important;
+
+  color: #d8e8f2 !important;
+
+  font-size: 8px !important;
+  font-weight: 900 !important;
+  letter-spacing: 2px;
+
+  cursor: pointer;
+}
+
+.outfitButton:hover {
+  color: #00e5ff !important;
+  border-color: #00e5ff !important;
+}
+
+/* ---------- WORLD CHAT ---------- */
+
+.worldChat {
+  position: absolute !important;
+
+  left: 32px !important;
+  bottom: 22px !important;
+
+  width: 275px !important;
+  height: 34px;
+
+  display: grid !important;
+  grid-template-columns: 25px 52px 1fr 15px;
+  align-items: center;
+
+  padding: 0 10px !important;
+
+  background: rgba(3,11,20,.82) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+
+  color: #62798b !important;
+
+  font-size: 8px !important;
+}
+
+.worldChat .chatIcon {
+  color: #00e5ff !important;
+}
+
+.worldChat strong {
+  color: #d5e3ec !important;
+  font-size: 8px !important;
+}
+
+.worldChat b {
+  color: #00e5ff !important;
+}
+
+/* ---------- BOTTOM STATUS ---------- */
+
+.lobbyBottom {
+  position: absolute !important;
+
+  left: 50% !important;
+  bottom: 20px !important;
+
+  transform: translateX(-50%);
+
+  display: flex !important;
+  gap: 28px;
+
+  color: #526a7d !important;
+
+  font-size: 7px !important;
+  letter-spacing: 2px;
+}
+
+.lobbyBottom span:nth-child(2) {
+  color: #00e5ff !important;
+}
+
+/* ---------- AUDIO ---------- */
+
+.audioButtons {
+  position: absolute !important;
+
+  right: 32px !important;
+  bottom: 20px !important;
+
+  display: flex !important;
+  gap: 5px;
+}
+
+.audioButtons button {
+  width: 31px !important;
+  height: 31px !important;
+
+  background: rgba(3,11,20,.82) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+
+  color: #8197a8 !important;
+
+  cursor: pointer;
+}
+
+.audioButtons button:hover {
+  color: #00e5ff !important;
+  border-color: rgba(0,229,255,.35) !important;
+}
+
+/* ---------- CINEMATIC EDGE ---------- */
+
+#lobbyUI::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  border: 1px solid rgba(0,229,255,.08);
+
+  box-shadow:
+    inset 0 0 120px rgba(0,0,0,.35),
+    inset 0 0 2px rgba(0,229,255,.18);
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+@media (max-width: 1100px) {
+  .navTabs {
+    display: none !important;
+  }
+
+  .lobbyRight {
+    width: 210px !important;
+  }
+
+  .lobbyLeft {
+    width: 245px !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .lobbyRight {
+    display: none !important;
+  }
+
+  .lobbyLeft {
+    width: 260px !important;
+  }
+
+  .playerProfile {
+    width: 160px !important;
+  }
+
+  .outfitButton {
+    display: none !important;
+  }
+}
+
+
+/* ============================================================
+   NEXUS LOBBY POPUP
+   ============================================================ */
+
+.lobbyPopup {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease, visibility .18s ease;
+}
+
+.lobbyPopup.open {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.lobbyPopupBackdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 8, 13, .78);
+  backdrop-filter: blur(8px);
+}
+
+.lobbyPopupWindow {
+  position: relative;
+  width: min(760px, calc(100vw - 40px));
+  max-height: min(680px, calc(100vh - 60px));
+  overflow: auto;
+  padding: 30px;
+  background:
+    linear-gradient(145deg, rgba(22, 31, 39, .98), rgba(7, 13, 18, .98));
+  border: 1px solid rgba(0, 229, 255, .45);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.04),
+    0 25px 80px rgba(0,0,0,.65),
+    0 0 35px rgba(0,229,255,.12);
+  clip-path: polygon(
+    0 0,
+    calc(100% - 18px) 0,
+    100% 18px,
+    100% 100%,
+    18px 100%,
+    0 calc(100% - 18px)
+  );
+}
+
+.lobbyPopupClose {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255,255,255,.2);
+  background: rgba(255,255,255,.05);
+  color: #fff;
+  font-size: 27px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.lobbyPopupClose:hover {
+  background: rgba(0,229,255,.18);
+  border-color: #00e5ff;
+  color: #00e5ff;
+}
+
+.lobbyPopupHeader {
+  margin-bottom: 24px;
+  padding-right: 45px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  padding-bottom: 18px;
+}
+
+.lobbyPopupEyebrow {
+  display: block;
+  margin-bottom: 5px;
+  color: #00e5ff;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+
+.lobbyPopupHeader h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.lobbyPopupContent {
+  color: #d9e1e5;
+}
+
+.popupGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.popupCard {
+  min-height: 100px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.1);
+}
+
+.popupCard:hover {
+  border-color: rgba(0,229,255,.45);
+  background: rgba(0,229,255,.07);
+}
+
+.popupCard strong {
+  color: #fff;
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+
+.popupCard span {
+  color: #8fa0aa;
+  font-size: 11px;
+  margin-top: 8px;
+}
+
+.popupCard b {
+  margin-top: 14px;
+  color: #00e5ff;
+  font-size: 12px;
+}
+
+.popupMission {
+  display: grid;
+  grid-template-columns: 170px 1fr auto;
+  align-items: center;
+  gap: 18px;
+  padding: 16px;
+  margin-bottom: 9px;
+  background: rgba(255,255,255,.045);
+  border-left: 3px solid #00e5ff;
+}
+
+.popupMission strong {
+  color: #fff;
+  font-size: 12px;
+}
+
+.popupMission span {
+  color: #9baab2;
+  font-size: 12px;
+}
+
+.popupMission b {
+  color: #00e5ff;
+  font-size: 11px;
+}
+
+.characterPreview {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  padding: 24px;
+  margin-bottom: 18px;
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.1);
+}
+
+.characterSilhouette {
+  width: 100px;
+  height: 130px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, #293944, #11191e);
+  border: 1px solid rgba(0,229,255,.35);
+  color: #00e5ff;
+  font-size: 46px;
+  font-weight: 900;
+}
+
+.characterPreview div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.characterPreview strong {
+  color: #fff;
+  font-size: 20px;
+}
+
+.characterPreview span {
+  color: #8fa0aa;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.popupActionButton {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #00e5ff;
+  background: rgba(0,229,255,.1);
+  color: #00e5ff;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.popupActionButton:hover {
+  background: #00e5ff;
+  color: #071016;
+}
+
+.settingsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settingsList button {
+  display: flex;
+  justify-content: space-between;
+  padding: 17px 18px;
+  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.045);
+  color: #dce4e8;
+  cursor: pointer;
+  text-align: left;
+}
+
+.settingsList button:hover {
+  border-color: rgba(0,229,255,.4);
+  background: rgba(0,229,255,.08);
+}
+
+.settingsList b {
+  color: #00e5ff;
+}
+
+.popupEmpty {
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(255,255,255,.035);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.popupEmpty strong {
+  color: #fff;
+  font-size: 20px;
+}
+
+.popupEmpty span {
+  color: #73838c;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+@media (max-width: 650px) {
+  .popupGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .popupMission {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+
+  .lobbyPopupWindow {
+    padding: 22px;
+  }
+}
+
+
+/* ============================================================
+   FULL LOBBY PAGES
+   ============================================================ */
+
+.lobbyPage {
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(circle at 70% 20%, rgba(0,229,255,.08), transparent 30%),
+    linear-gradient(135deg, #0a1117 0%, #05090d 55%, #0b141b 100%);
+  color: #fff;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateX(25px);
+  pointer-events: none;
+  transition:
+    opacity .2s ease,
+    transform .2s ease,
+    visibility .2s ease;
+}
+
+.lobbyPage.open {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.lobbyPageTop {
+  height: 76px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 38px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  background: rgba(3,8,12,.88);
+}
+
+.lobbyPageBack {
+  min-width: 100px;
+  padding: 11px 18px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.04);
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.lobbyPageBack:hover {
+  border-color: #00e5ff;
+  color: #00e5ff;
+  background: rgba(0,229,255,.08);
+}
+
+.lobbyPageBrand {
+  margin-left: 35px;
+  display: flex;
+  flex-direction: column;
+}
+
+.lobbyPageBrand strong {
+  font-size: 21px;
+  letter-spacing: 4px;
+}
+
+.lobbyPageBrand span {
+  color: #71818b;
+  font-size: 8px;
+  letter-spacing: 3px;
+}
+
+.lobbyPagePlayer {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.lobbyPagePlayer strong {
+  font-size: 12px;
+}
+
+.lobbyPagePlayer span {
+  color: #00e5ff;
+  font-size: 9px;
+  letter-spacing: 1px;
+  margin-top: 3px;
+}
+
+.lobbyPageBody {
+  width: min(1180px, calc(100% - 70px));
+  margin: 0 auto;
+  padding: 52px 0 80px;
+  overflow-y: auto;
+}
+
+.lobbyPageEyebrow {
+  color: #00e5ff;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  margin-bottom: 8px;
+}
+
+.lobbyPageBody > h1 {
+  margin: 0 0 35px;
+  font-size: clamp(34px, 5vw, 58px);
+  letter-spacing: 3px;
+  font-weight: 950;
+}
+
+.fullPageGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.inventoryWeaponCard {
+  min-height: 300px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.015));
+  border: 1px solid rgba(255,255,255,.1);
+  position: relative;
+}
+
+.inventoryWeaponCard.selected {
+  border-color: rgba(0,229,255,.55);
+  box-shadow: inset 0 0 35px rgba(0,229,255,.05);
+}
+
+.itemType {
+  color: #70818b;
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+.inventoryWeaponCard > strong {
+  margin-top: 7px;
+  font-size: 22px;
+}
+
+.weaponLargeIcon {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  color: #dce7eb;
+  font-size: 80px;
+  transform: scaleX(2.2);
+  text-shadow: 0 0 25px rgba(0,229,255,.25);
+}
+
+.inventoryWeaponCard > span:last-of-type {
+  color: #7e919b;
+  font-size: 10px;
+}
+
+.inventoryWeaponCard button,
+.armoryCard button,
+.storeProduct button {
+  margin-top: 15px;
+  padding: 11px;
+  border: 1px solid rgba(0,229,255,.45);
+  background: rgba(0,229,255,.08);
+  color: #00e5ff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.inventoryWeaponCard button:hover,
+.armoryCard button:hover,
+.storeProduct button:hover {
+  background: #00e5ff;
+  color: #061016;
+}
+
+.missionPage {
+  max-width: 900px;
+}
+
+.missionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 25px 0 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+}
+
+.missionHeader strong {
+  letter-spacing: 2px;
+}
+
+.missionHeader span {
+  color: #00e5ff;
+  font-size: 10px;
+}
+
+.missionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px;
+  margin-bottom: 8px;
+  background: rgba(255,255,255,.045);
+  border-left: 3px solid #00e5ff;
+}
+
+.missionRow div {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.missionRow strong {
+  font-size: 14px;
+}
+
+.missionRow span {
+  color: #82929b;
+  font-size: 11px;
+}
+
+.missionRow b {
+  color: #00e5ff;
+  font-size: 12px;
+}
+
+.characterHero {
+  min-height: 410px;
+  display: flex;
+  align-items: center;
+  gap: 70px;
+  padding: 40px;
+  background:
+    radial-gradient(circle at 25% 50%, rgba(0,229,255,.12), transparent 30%),
+    rgba(255,255,255,.035);
+  border: 1px solid rgba(255,255,255,.1);
+}
+
+.characterHeroFigure {
+  width: 260px;
+  height: 330px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, #263943, #0c1318);
+  border: 1px solid rgba(0,229,255,.35);
+  color: #00e5ff;
+  font-size: 110px;
+  font-weight: 950;
+  box-shadow: 0 0 60px rgba(0,229,255,.08);
+}
+
+.characterInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.characterInfo > span {
+  color: #00e5ff;
+  font-size: 10px;
+  letter-spacing: 3px;
+}
+
+.characterInfo h2 {
+  margin: 8px 0;
+  font-size: 34px;
+}
+
+.characterInfo > strong {
+  color: #8c9ba3;
+  font-size: 12px;
+}
+
+.characterXP {
+  width: 330px;
+  height: 6px;
+  margin-top: 20px;
+  background: rgba(255,255,255,.1);
+}
+
+.characterXP i {
+  display: block;
+  width: 35%;
+  height: 100%;
+  background: #00e5ff;
+}
+
+.characterInfo small {
+  margin-top: 7px;
+  color: #70818a;
+}
+
+.characterInfo button {
+  margin-top: 30px;
+  padding: 14px 25px;
+  border: 1px solid #00e5ff;
+  background: rgba(0,229,255,.08);
+  color: #00e5ff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.characterOptions {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.characterOptions div {
+  padding: 18px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.characterOptions span,
+.characterOptions strong {
+  display: block;
+}
+
+.characterOptions span {
+  color: #70818a;
+  font-size: 9px;
+  letter-spacing: 1px;
+  margin-bottom: 7px;
+}
+
+.characterOptions strong {
+  font-size: 11px;
+}
+
+.armoryPage {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 14px;
+}
+
+.armoryCard {
+  padding: 22px;
+  min-height: 430px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.1);
+}
+
+.armoryCard.active {
+  border-color: rgba(0,229,255,.55);
+}
+
+.armoryCard > span {
+  color: #73858f;
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+.armoryCard h2 {
+  margin: 8px 0 35px;
+}
+
+.armoryGun {
+  height: 100px;
+  display: grid;
+  place-items: center;
+  color: #d9e5e9;
+  font-size: 30px;
+  transform: scaleX(1.7);
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-top: 1px solid rgba(255,255,255,.08);
+  font-size: 10px;
+}
+
+.stat span {
+  color: #71828c;
+}
+
+.stat b {
+  color: #fff;
+}
+
+.storeTop {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.storeTop strong {
+  letter-spacing: 2px;
+}
+
+.storeTop span {
+  color: #00e5ff;
+}
+
+.storeGrid {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 15px;
+}
+
+.storeProduct {
+  padding: 18px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.1);
+}
+
+.storeProductImage {
+  height: 190px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 18px;
+  background: linear-gradient(145deg,#18242c,#0a1014);
+  color: #00e5ff;
+  font-size: 65px;
+}
+
+.storeProduct > span {
+  color: #71828c;
+  font-size: 9px;
+}
+
+.storeProduct strong,
+.storeProduct b {
+  display: block;
+  margin-top: 7px;
+}
+
+.storeProduct b {
+  color: #00e5ff;
+}
+
+.settingsPage {
+  max-width: 850px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+
+.settingsSection {
+  background: rgba(255,255,255,.035);
+  border: 1px solid rgba(255,255,255,.08);
+  padding: 20px;
+}
+
+.settingsSection > strong {
+  display: block;
+  color: #00e5ff;
+  font-size: 11px;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.settingsSection button {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 5px;
+  border: 0;
+  border-top: 1px solid rgba(255,255,255,.08);
+  background: transparent;
+  color: #d8e1e5;
+  cursor: pointer;
+  text-align: left;
+}
+
+.settingsSection button:hover {
+  color: #00e5ff;
+}
+
+.settingsSection b {
+  color: #00e5ff;
+}
+
+.comingSoonPage {
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,.035);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.comingSoonPage strong {
+  font-size: 28px;
+}
+
+.comingSoonPage span {
+  margin-top: 10px;
+  color: #71828c;
+  font-size: 10px;
+  letter-spacing: 3px;
+}
+
+@media (max-width: 850px) {
+  .fullPageGrid,
+  .armoryPage,
+  .storeGrid {
+    grid-template-columns: repeat(2,1fr);
+  }
+
+  .characterHero {
+    gap: 30px;
+  }
+
+  .characterHeroFigure {
+    width: 190px;
+    height: 260px;
+  }
+
+  .characterOptions {
+    grid-template-columns: repeat(2,1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .lobbyPageTop {
+    padding: 0 15px;
+  }
+
+  .lobbyPageBody {
+    width: calc(100% - 30px);
+    padding-top: 30px;
+  }
+
+  .fullPageGrid,
+  .armoryPage,
+  .storeGrid,
+  .settingsPage {
+    grid-template-columns: 1fr;
+  }
+
+  .characterHero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .characterHeroFigure {
+    width: 100%;
+  }
+
+  .characterXP {
+    width: 100%;
+  }
+}
+
+
+/* ============================================================
+   EVENTS / LEADERBOARD / ACHIEVEMENTS / BATTLE PASS
+   ============================================================ */
+
+.featureHero,
+.battlePassHero {
+  padding: 38px;
+  margin-bottom: 20px;
+  background:
+    linear-gradient(110deg, rgba(0,229,255,.10), rgba(255,255,255,.025));
+  border: 1px solid rgba(0,229,255,.25);
+}
+
+.featureHero span,
+.battlePassHero span {
+  color: #00e5ff;
+  font-size: 10px;
+  letter-spacing: 3px;
+}
+
+.featureHero h2,
+.battlePassHero h2 {
+  margin: 8px 0;
+  font-size: 30px;
+}
+
+.featureHero p,
+.battlePassHero p {
+  color: #83949d;
+  font-size: 12px;
+}
+
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 14px;
+}
+
+.featureCard {
+  padding: 25px;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.1);
+}
+
+.featureCard strong {
+  font-size: 18px;
+}
+
+.featureCard span {
+  margin-top: 12px;
+  color: #84949d;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.featureCard b {
+  margin-top: auto;
+  color: #00e5ff;
+  font-size: 10px;
+}
+
+.leaderboardPage {
+  max-width: 900px;
+}
+
+.leaderboardHeader {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 20px;
+  color: #71838c;
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.leaderboardRow {
+  display: grid;
+  grid-template-columns: 80px 1fr 140px 100px;
+  align-items: center;
+  padding: 20px;
+  margin-bottom: 6px;
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.07);
+}
+
+.leaderboardRow > b {
+  color: #00e5ff;
+}
+
+.leaderboardRow span {
+  color: #9aa8ae;
+}
+
+.leaderboardRow em {
+  color: #74858e;
+  font-style: normal;
+  font-size: 10px;
+}
+
+.leaderboardRow.first {
+  border-color: rgba(255,255,255,.3);
+}
+
+.leaderboardRow.yourRank {
+  margin-top: 25px;
+  border-color: #00e5ff;
+  background: rgba(0,229,255,.08);
+}
+
+.achievementPage {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 14px;
+}
+
+.achievementCard {
+  min-height: 190px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255,255,255,.035);
+  border: 1px solid rgba(255,255,255,.09);
+}
+
+.achievementCard > div {
+  font-size: 34px;
+  color: #53646c;
+}
+
+.achievementCard strong {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.achievementCard span {
+  margin-top: 8px;
+  color: #7d8d95;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.achievementCard b {
+  margin-top: auto;
+  color: #64757e;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.achievementCard.unlocked {
+  border-color: rgba(0,229,255,.35);
+}
+
+.achievementCard.unlocked > div,
+.achievementCard.unlocked b {
+  color: #00e5ff;
+}
+
+.battlePassProgress {
+  width: min(600px,100%);
+  height: 7px;
+  margin: 15px 0 8px;
+  background: rgba(255,255,255,.1);
+}
+
+.battlePassProgress i {
+  display: block;
+  width: 35%;
+  height: 100%;
+  background: #00e5ff;
+}
+
+.battlePassHero > strong {
+  font-size: 11px;
+  color: #9aabb3;
+}
+
+.rewardTrack {
+  display: grid;
+  grid-template-columns: repeat(5,1fr);
+  gap: 10px;
+}
+
+.reward {
+  min-height: 160px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.1);
+}
+
+.reward > span {
+  color: #71828b;
+  font-size: 9px;
+}
+
+.reward strong {
+  margin-top: 25px;
+  font-size: 14px;
+}
+
+.reward b {
+  margin-top: auto;
+  color: #596a72;
+  font-size: 9px;
+}
+
+.reward.unlocked {
+  border-color: rgba(0,229,255,.25);
+}
+
+.reward.unlocked b,
+.reward.current b {
+  color: #00e5ff;
+}
+
+.reward.current {
+  border: 1px solid #00e5ff;
+  box-shadow: 0 0 25px rgba(0,229,255,.08);
+}
+
+@media (max-width: 800px) {
+  .featureGrid,
+  .achievementPage {
+    grid-template-columns: repeat(2,1fr);
+  }
+
+  .armoryPage {
+    grid-template-columns: repeat(2,1fr);
+  }
+
+  .rewardTrack {
+    grid-template-columns: repeat(2,1fr);
+  }
+}
+
+@media (max-width: 550px) {
+  .featureGrid,
+  .achievementPage,
+  .armoryPage {
+    grid-template-columns: 1fr;
+  }
+
+  .leaderboardRow {
+    grid-template-columns: 50px 1fr;
+    gap: 8px;
+  }
+
+  .leaderboardRow span,
+  .leaderboardRow em {
+    grid-column: 2;
+  }
+}
+
+
+/* ============================================================
+   CHARACTER 3D PREVIEW
+   ============================================================ */
+
+.characterHeroFigure {
+  position: relative;
+  overflow: hidden;
+  perspective: 700px;
+}
+
+.characterPreviewGrid {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(0,229,255,.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,.08) 1px, transparent 1px);
+  background-size: 28px 28px;
+  transform: perspective(350px) rotateX(60deg) scale(1.5);
+  transform-origin: bottom;
+  opacity: .45;
+}
+
+.characterPreviewModel {
+  position: absolute;
+  left: 50%;
+  bottom: 25px;
+  width: 120px;
+  height: 270px;
+  transform: translateX(-50%);
+  transform-style: preserve-3d;
+  animation: characterIdle 3.5s ease-in-out infinite;
+}
+
+.previewHead {
+  position: absolute;
+  left: 35px;
+  top: 0;
+  width: 50px;
+  height: 55px;
+  border-radius: 45% 45% 42% 42%;
+  background: linear-gradient(145deg,#d5a47b,#8b5a3c);
+  border: 2px solid #252d31;
+  box-shadow: inset -8px -5px 12px rgba(0,0,0,.35);
+}
+
+.previewHead::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: -8px;
+  width: 56px;
+  height: 22px;
+  border-radius: 50% 50% 25% 25%;
+  background: #171d20;
+}
+
+.previewBody {
+  position: absolute;
+  left: 25px;
+  top: 52px;
+  width: 70px;
+  height: 105px;
+  border-radius: 12px 12px 7px 7px;
+  background:
+    linear-gradient(90deg,#202a2f,#3c4c52 48%,#1c2529);
+  border: 2px solid #151b1e;
+  box-shadow:
+    inset 8px 0 15px rgba(0,0,0,.35),
+    inset -8px 0 15px rgba(255,255,255,.04);
+}
+
+.previewBody::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 22px;
+  width: 46px;
+  height: 5px;
+  background: #00e5ff;
+  box-shadow: 0 22px 0 rgba(0,229,255,.2);
+}
+
+.previewArm {
+  position: absolute;
+  top: 60px;
+  width: 20px;
+  height: 105px;
+  border-radius: 9px;
+  background: linear-gradient(90deg,#182024,#3b4b50);
+  border: 2px solid #12181b;
+  transform-origin: top center;
+}
+
+.previewArmLeft {
+  left: 8px;
+  transform: rotate(8deg);
+}
+
+.previewArmRight {
+  right: 8px;
+  transform: rotate(-8deg);
+}
+
+.previewLeg {
+  position: absolute;
+  top: 150px;
+  width: 27px;
+  height: 110px;
+  border-radius: 5px 5px 8px 8px;
+  background: linear-gradient(90deg,#151d21,#34434a);
+  border: 2px solid #12181b;
+}
+
+.previewLegLeft {
+  left: 28px;
+}
+
+.previewLegRight {
+  right: 28px;
+}
+
+.previewLegLeft::after,
+.previewLegRight::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  width: 42px;
+  height: 14px;
+  border-radius: 5px;
+  background: #11171a;
+}
+
+.previewLegLeft::after {
+  left: -5px;
+}
+
+.previewLegRight::after {
+  right: -5px;
+}
+
+@keyframes characterIdle {
+  0%,100% {
+    transform: translateX(-50%) rotateY(-5deg) translateY(0);
+  }
+
+  50% {
+    transform: translateX(-50%) rotateY(5deg) translateY(-5px);
+  }
+}
+
+
+/* ============================================================
+   ARMORY WEAPON VISUALS
+   ============================================================ */
+
+.armoryWeaponVisual {
+  position: relative;
+  height: 125px;
+  margin: 5px 0 15px;
+  transform: rotate(-4deg);
+  filter: drop-shadow(0 8px 12px rgba(0,0,0,.45));
+}
+
+.armoryWeaponVisual::before {
+  content: "";
+  position: absolute;
+  left: 12%;
+  top: 43%;
+  width: 67%;
+  height: 13px;
+  border-radius: 3px;
+  background: linear-gradient(180deg,#7c898e,#20282c);
+  box-shadow: inset 0 2px rgba(255,255,255,.18);
+}
+
+.armoryWeaponVisual::after {
+  content: "";
+  position: absolute;
+  left: 68%;
+  top: 39%;
+  width: 24%;
+  height: 21px;
+  background: #151b1e;
+  border-radius: 2px 7px 7px 2px;
+}
+
+.armoryWeaponVisual i {
+  position: absolute;
+  display: block;
+  background: #151b1e;
+  border-radius: 2px;
+}
+
+.rifleVisual i:nth-child(1) {
+  left: 8%;
+  top: 39%;
+  width: 18%;
+  height: 20px;
+}
+
+.rifleVisual i:nth-child(2) {
+  left: 48%;
+  top: 51%;
+  width: 10px;
+  height: 55px;
+  transform: rotate(13deg);
+}
+
+.rifleVisual i:nth-child(3) {
+  left: 31%;
+  top: 48%;
+  width: 34px;
+  height: 50px;
+  transform: rotate(-14deg);
+  clip-path: polygon(20% 0,100% 0,70% 100%,0 100%);
+}
+
+.smgVisual::before {
+  width: 62%;
+  height: 18px;
+  top: 43%;
+}
+
+.smgVisual::after {
+  left: 67%;
+  width: 27%;
+}
+
+.smgVisual i:nth-child(1) {
+  left: 9%;
+  top: 37%;
+  width: 17%;
+  height: 26px;
+}
+
+.smgVisual i:nth-child(2) {
+  left: 44%;
+  top: 50%;
+  width: 12px;
+  height: 48px;
+  transform: rotate(15deg);
+}
+
+.smgVisual i:nth-child(3) {
+  left: 29%;
+  top: 51%;
+  width: 30px;
+  height: 37px;
+  transform: rotate(-10deg);
+}
+
+.shotgunVisual::before {
+  left: 8%;
+  width: 78%;
+  height: 15px;
+}
+
+.shotgunVisual::after {
+  left: 76%;
+  width: 17%;
+  height: 19px;
+}
+
+.shotgunVisual i:nth-child(1) {
+  left: 6%;
+  top: 38%;
+  width: 13%;
+  height: 27px;
+}
+
+.shotgunVisual i:nth-child(2) {
+  left: 38%;
+  top: 51%;
+  width: 13px;
+  height: 51px;
+  transform: rotate(12deg);
+}
+
+.shotgunVisual i:nth-child(3) {
+  left: 28%;
+  top: 49%;
+  width: 38px;
+  height: 35px;
+  transform: rotate(-12deg);
+}
+
+.pistolVisual {
+  width: 90%;
+  margin-left: 5%;
+}
+
+.pistolVisual::before {
+  left: 14%;
+  top: 38%;
+  width: 58%;
+  height: 17px;
+}
+
+.pistolVisual::after {
+  left: 68%;
+  top: 36%;
+  width: 25%;
+  height: 23px;
+}
+
+.pistolVisual i:nth-child(1) {
+  left: 10%;
+  top: 34%;
+  width: 14%;
+  height: 28px;
+}
+
+.pistolVisual i:nth-child(2) {
+  left: 39%;
+  top: 49%;
+  width: 35px;
+  height: 48px;
+  transform: rotate(15deg);
+  clip-path: polygon(0 0,100% 0,78% 100%,20% 100%);
+}
+
+.pistolVisual i:nth-child(3) {
+  left: 55%;
+  top: 47%;
+  width: 25px;
+  height: 8px;
+  background: #69767b;
+}
+
+.armoryStats {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.armoryStats > div {
+  display: grid;
+  grid-template-columns: 75px 42px 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.armoryStats span {
+  color: #71828a;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+.armoryStats b {
+  color: #e4ecef;
+  font-size: 9px;
+  text-align: right;
+}
+
+.armoryStats > div > i {
+  height: 4px;
+  display: block;
+  background: rgba(255,255,255,.1);
+}
+
+.armoryStats > div > i > em {
+  display: block;
+  height: 100%;
+  background: #00e5ff;
+}
+
+.armoryCard {
+  transition: transform .18s ease, border-color .18s ease;
+}
+
+.armoryCard:hover {
+  transform: translateY(-5px);
+  border-color: rgba(0,229,255,.45);
+}
+
+.armoryCard.active {
+  box-shadow: inset 0 0 30px rgba(0,229,255,.04);
+}
+
+
+/* ============================================================
+   REALISTIC ARMORY WEAPON RENDERS
+   ============================================================ */
+
+.armoryWeaponVisual.realWeapon {
+  height: 150px;
+  margin: 0 -8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: none;
+  filter:
+    drop-shadow(0 12px 10px rgba(0,0,0,.55))
+    drop-shadow(0 0 8px rgba(255,255,255,.05));
+}
+
+.armoryWeaponVisual.realWeapon svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.armoryWeaponVisual.realWeapon .gunDark {
+  fill: #11171a;
+  stroke: #070b0d;
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+
+.armoryWeaponVisual.realWeapon .gunDark2 {
+  fill: #20282c;
+  stroke: #090d0f;
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.armoryWeaponVisual.realWeapon .gunMetal {
+  fill: #69767b;
+  stroke: #090d0f;
+  stroke-width: 3;
+}
+
+.armoryWeaponVisual.realWeapon .gunMetal2 {
+  fill: #3e494e;
+  stroke: #111619;
+  stroke-width: 3;
+}
+
+.armoryWeaponVisual.realWeapon .gunAccent {
+  fill: #59666b;
+  stroke: #111619;
+  stroke-width: 2;
+}
+
+.armoryWeaponVisual.realWeapon .gunDetail {
+  fill: none;
+  stroke: #718086;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.armoryWeaponVisual.realWeapon svg::after {
+  content: "";
+}
+
+.armoryCard {
+  overflow: hidden;
+}
+
+.armoryCard:hover .realWeapon {
+  transform: translateY(-3px) scale(1.025);
+  filter:
+    drop-shadow(0 15px 13px rgba(0,0,0,.62))
+    drop-shadow(0 0 12px rgba(0,229,255,.09));
+}
+
+.armoryCard.active .realWeapon {
+  filter:
+    drop-shadow(0 14px 12px rgba(0,0,0,.6))
+    drop-shadow(0 0 16px rgba(0,229,255,.13));
+}
+
+
+/* REAL WEAPON ASSETS */
+
+.armoryWeaponVisual.realWeapon {
+  height: 175px;
+  width: 100%;
+  margin: 0 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transform: none;
+  filter: drop-shadow(0 14px 12px rgba(0,0,0,.6));
+}
+
+.armoryWeaponVisual.realWeapon img {
+  width: 112%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  transition: transform .2s ease, filter .2s ease;
+}
+
+.armoryCard:hover .armoryWeaponVisual.realWeapon img {
+  transform: scale(1.06);
+  filter: brightness(1.08) contrast(1.05);
+}
+
+.armoryCard.active .armoryWeaponVisual.realWeapon img {
+  filter:
+    brightness(1.08)
+    contrast(1.05)
+    drop-shadow(0 0 10px rgba(0,229,255,.12));
+}
+
+
+/* ============================================================
+   REAL WEAPON IMAGES — REMOVE OLD CSS WEAPON OVERLAYS
+   ============================================================ */
+
+.armoryWeaponVisual.realWeapon::before,
+.armoryWeaponVisual.realWeapon::after {
+  display: none !important;
+  content: none !important;
+}
+
+.armoryWeaponVisual.realWeapon i {
+  display: none !important;
+}
+
+.armoryWeaponVisual.realWeapon {
+  position: relative;
+  width: 100%;
+  height: 205px;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  background: transparent !important;
+  transform: none !important;
+  filter: drop-shadow(0 16px 14px rgba(0,0,0,.55));
+}
+
+.armoryWeaponVisual.realWeapon img {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  object-fit: contain;
+  object-position: center;
+  background: transparent !important;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  transform: none;
+  filter: none;
+}
+
+.armoryCard:hover .armoryWeaponVisual.realWeapon img {
+  transform: scale(1.035);
+  filter: brightness(1.06);
+}
+
+.armoryCard.active .armoryWeaponVisual.realWeapon img {
+  filter: brightness(1.04) contrast(1.04);
+}
+
+
+/* ============================================================
+   INVENTORY — REAL WEAPON IMAGES
+   ============================================================ */
+
+.inventoryWeaponImage {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  margin: 8px 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: transparent !important;
+}
+
+.inventoryWeaponImage img {
+  width: 112%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  background: transparent !important;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  filter: drop-shadow(0 15px 12px rgba(0,0,0,.6));
+  transition: transform .2s ease, filter .2s ease;
+}
+
+.inventoryWeaponCard:hover .inventoryWeaponImage img {
+  transform: scale(1.05);
+  filter:
+    brightness(1.08)
+    drop-shadow(0 18px 15px rgba(0,0,0,.65));
+}
+
+.inventoryWeaponCard.selected .inventoryWeaponImage img {
+  filter:
+    brightness(1.05)
+    contrast(1.04)
+    drop-shadow(0 0 14px rgba(0,229,255,.12))
+    drop-shadow(0 15px 12px rgba(0,0,0,.6));
+}
+
+
+.inventoryWeaponCard.selected {
+  border-color: #00e5ff;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(0,229,255,.08), transparent 55%),
+    rgba(255,255,255,.045);
+  box-shadow:
+    inset 0 0 35px rgba(0,229,255,.06),
+    0 0 18px rgba(0,229,255,.05);
+}
+
+.inventoryWeaponCard.selected::before {
+  content: "SELECTED";
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  color: #00e5ff;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.inventoryWeaponCard {
+  position: relative;
+}
+
+
+.inventoryWeaponCard {
+  position: relative;
+  overflow: hidden;
+}
+
+.inventoryWeaponCard.selected {
+  border-color: #00e5ff;
+  box-shadow:
+    inset 0 0 35px rgba(0,229,255,.06),
+    0 0 18px rgba(0,229,255,.06);
+}
+
+.inventoryWeaponCard.selected::before {
+  content: "EQUIPPED";
+  position: absolute;
+  top: 14px;
+  right: 15px;
+  z-index: 5;
+  color: #00e5ff;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.inventoryWeaponImage {
+  position: relative;
+  z-index: 1;
+}
+
+.inventoryWeaponImage img {
+  position: relative;
+  z-index: 2;
+}
+
+
+.resultsUI {
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(18, 30, 42, .72),
+      rgba(0, 0, 0, .92)
+    ) !important;
+  backdrop-filter: blur(8px);
+}
+
+.resultsCard {
+  width: min(560px, calc(100vw - 40px));
+  padding: 42px 44px 36px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(8, 15, 23, .98),
+      rgba(2, 7, 12, .98)
+    );
+  border: 1px solid rgba(255,255,255,.16);
+  box-shadow:
+    0 30px 100px rgba(0,0,0,.75);
+}
+
+.resultsEyebrow {
+  color: #8d9aa5;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  margin-bottom: 14px;
+}
+
+.resultsTitle {
+  color: #ffffff;
+  font-size: clamp(42px, 8vw, 68px);
+  font-weight: 1000;
+  letter-spacing: 5px;
+  line-height: .95;
+}
+
+.resultsSubtitle {
+  margin-top: 10px;
+  color: #8e9aa4;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+
+.resultsPlacement {
+  margin: 30px 0 26px;
+  color: #ffffff;
+  font-size: 64px;
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.resultsPlacement small {
+  display: block;
+  margin-top: 7px;
+  color: #6f7b84;
+  font-size: 9px;
+  letter-spacing: 4px;
+}
+
+.resultsStats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid rgba(255,255,255,.1);
+}
+
+.resultStat {
+  min-width: 0;
+  padding: 18px 8px;
+  border-right: 1px solid rgba(255,255,255,.1);
+}
+
+.resultStat:last-child {
+  border-right: 0;
+}
+
+.resultStat span,
+.resultsDetails span {
+  display: block;
+  color: #6f7b84;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.resultStat strong {
+  display: block;
+  margin-top: 7px;
+  color: #fff;
+  font-size: 21px;
+  font-weight: 900;
+}
+
+.resultsDivider {
+  height: 1px;
+  margin: 24px 0;
+  background: rgba(255,255,255,.1);
+}
+
+.resultsDetails {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  text-align: left;
+}
+
+.resultsDetails strong {
+  display: block;
+  margin-top: 7px;
+  color: #dce5ea;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.returnButton {
+  width: 100%;
+  margin-top: 30px;
+  min-height: 52px;
+  border: 0;
+  background: #ffffff;
+  color: #071018;
+  font-weight: 1000;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: transform .15s ease, opacity .15s ease;
+}
+
+.returnButton:hover {
+  transform: translateY(-2px);
+}
+
+.returnButton:active {
+  transform: translateY(0);
+  opacity: .8;
+}
+
+@media (max-width: 600px) {
+  .resultsCard {
+    padding: 30px 20px 24px;
+  }
+
+  .resultsStats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .resultStat:nth-child(2) {
+    border-right: 0;
+  }
+
+  .resultStat:nth-child(-n+2) {
+    border-bottom: 1px solid rgba(255,255,255,.1);
+  }
+}
+
+
+/* =========================================================
+   MAP SELECTION
+========================================================= */
+
+.mapSelectionPage {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.mapSelectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.mapSelectionHeader strong {
+  font-size: 22px;
+  letter-spacing: 2px;
+}
+
+.mapSelectionHeader span {
+  opacity: 0.55;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+.mapSelectionGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.mapSelectionCard {
+  min-height: 105px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.035);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: .18s ease;
+}
+
+.mapSelectionCard:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255,255,255,.30);
+  background: rgba(255,255,255,.07);
+}
+
+.mapSelectionCard.selected {
+  border-color: rgba(255,255,255,.65);
+  background: rgba(255,255,255,.10);
+}
+
+.mapSelectionNumber {
+  font-size: 12px;
+  opacity: .4;
+  letter-spacing: 1px;
+}
+
+.mapSelectionInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mapSelectionInfo strong {
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.mapSelectionInfo small {
+  font-size: 9px;
+  opacity: .45;
+  letter-spacing: 1px;
+}
+
+.mapSelectionCheck {
+  font-size: 9px;
+  letter-spacing: 1px;
+  opacity: .5;
+}
+
+.mapSelectionCard.selected .mapSelectionCheck {
+  opacity: 1;
+}
+
+@media (max-width: 700px) {
+  .mapSelectionGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* NEW WEAPONS -> MAP SELECTOR */
+.newWeaponsMapButton {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 4px 10px;
+  font-size: 34px;
+  line-height: 1;
+  transition: transform .18s ease, opacity .18s ease;
+}
+
+.newWeaponsMapButton:hover {
+  transform: translateX(5px);
+  opacity: .8;
+}
+
+.newWeaponsMapButton:active {
+  transform: translateX(2px);
+}
+
+
+/* =========================================================
+   ACCOUNT SYSTEM
+========================================================= */
+
+.accountUI {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(1, 6, 12, .82);
+  backdrop-filter: blur(10px);
+  pointer-events: auto;
+}
+
+.accountUI.open {
+  display: flex;
+}
+
+.accountWindow {
+  width: min(440px, calc(100vw - 32px));
+  padding: 30px;
+  border: 1px solid rgba(0, 220, 255, .45);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(9, 25, 38, .98),
+      rgba(2, 10, 18, .98)
+    );
+  box-shadow:
+    0 0 45px rgba(0, 210, 255, .12);
+}
+
+.accountHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 24px;
+}
+
+.accountHeader span {
+  font-size: 9px;
+  letter-spacing: 3px;
+  opacity: .45;
+}
+
+.accountHeader strong {
+  font-size: 26px;
+  letter-spacing: 3px;
+}
+
+.accountTabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+
+.accountTab {
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.035);
+  color: inherit;
+  padding: 12px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.accountTab.active,
+.accountTab:hover {
+  border-color: rgba(0,220,255,.6);
+  background: rgba(0,220,255,.08);
+}
+
+#accountForm {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+#accountForm label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 9px;
+  letter-spacing: 2px;
+  opacity: .75;
+}
+
+#accountForm input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.30);
+  color: white;
+  padding: 13px;
+  outline: none;
+  font: inherit;
+}
+
+#accountForm input:focus {
+  border-color: rgba(0,220,255,.65);
+}
+
+.accountSubmit {
+  margin-top: 5px;
+  border: 1px solid rgba(0,220,255,.8);
+  background: rgba(0,210,255,.12);
+  color: white;
+  padding: 15px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.accountSubmit:hover {
+  background: rgba(0,210,255,.22);
+}
+
+.accountSubmit:disabled {
+  opacity: .45;
+  cursor: wait;
+}
+
+.accountMessage {
+  min-height: 18px;
+  color: #7feaff;
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 1px;
+}
+
+.playerProfile {
+  cursor: pointer;
+}
+
+.playerProfile:hover {
+  filter: brightness(1.2);
+}
+
+
+/* =========================================================
+   ACCOUNT PROFILE BUTTON
+========================================================= */
+
+#playerProfileButton {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  width: auto;
+  cursor: pointer;
+  position: relative;
+  z-index: 50;
+  pointer-events: auto;
+}
+
+#playerProfileButton:hover {
+  filter: brightness(1.2);
+}
+
+#playerProfileButton:focus-visible {
+  outline: 1px solid rgba(0, 220, 255, .7);
+}
+
+
+.accountProfilePanel {
+  display: none;
+  margin-top: 18px;
+}
+
+.accountProfilePanel.visible {
+  display: block;
+}
+
+.accountFormHidden {
+  display: none !important;
+}
+
+.accountProfileName {
+  padding: 18px 0;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+}
+
+.accountProfileStats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.accountProfileStats > div {
+  padding: 14px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.035);
+}
+
+.accountProfileStats span {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  opacity: .5;
+  margin-bottom: 6px;
+}
+
+.accountProfileStats strong {
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+.accountLogout {
+  width: 100%;
+  margin-top: 14px;
+  padding: 13px;
+  border: 1px solid rgba(255,70,70,.45);
+  background: rgba(255,50,50,.08);
+  color: inherit;
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 2px;
+  cursor: pointer;
+}
+
+.accountLogout:hover {
+  background: rgba(255,50,50,.16);
+  border-color: rgba(255,90,90,.7);
+}
+
